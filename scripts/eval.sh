@@ -5,8 +5,14 @@ set -euo pipefail
 # Reads an eval JSON file, searches via the MCP server, judges results via the Anthropic API.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-EVAL_FILE="${1:-${SCRIPT_DIR}/../data/evals/evals.json}"
+EVAL_FILE="${1:-}"
 SERVER_URL="${SERVER_URL:-http://localhost:8080}"
+
+if [[ -z "${EVAL_FILE}" ]]; then
+    echo "Usage: $0 <eval-file>" >&2
+    echo "Example: $0 data/evals/evals.json" >&2
+    exit 1
+fi
 
 : "${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY}"
 

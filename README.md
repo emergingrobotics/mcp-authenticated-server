@@ -132,7 +132,7 @@ make run
 
 # 8. Run evaluations (optional, requires ANTHROPIC_API_KEY for the LLM judge)
 export ANTHROPIC_API_KEY="sk-ant-..."
-make eval
+make eval EVAL_FILE=data/evals/evals.json
 ```
 
 The embedding server (`make embed-server`) runs as a long-lived process in a separate terminal. It must be running before ingestion or search will work. Any OpenAI-compatible `/v1/embeddings` endpoint works as an alternative (vLLM, TEI, OpenAI API, etc.) -- just set `embed.host` in `config.toml`.

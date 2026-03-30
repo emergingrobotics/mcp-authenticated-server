@@ -4,8 +4,14 @@ set -euo pipefail
 # EVAL-05: Run the eval suite N times to measure stability.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-RUNS="${1:-25}"
-EVAL_FILE="${2:-${SCRIPT_DIR}/../data/evals/evals.json}"
+EVAL_FILE="${1:-}"
+RUNS="${2:-25}"
+
+if [[ -z "${EVAL_FILE}" ]]; then
+    echo "Usage: $0 <eval-file> [num-runs]" >&2
+    echo "Example: $0 data/evals/evals.json 25" >&2
+    exit 1
+fi
 
 echo "Running eval stability test: ${RUNS} iterations"
 echo "Eval file: ${EVAL_FILE}"

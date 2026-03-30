@@ -23,8 +23,8 @@ help:
 	@echo "  ingest           Ingest documents (set DIR=path)"
 	@echo "  schema           Run schema migrations"
 	@echo "  validate         Validate configuration"
-	@echo "  eval             Run evaluation script"
-	@echo "  eval-stability   Run stability evaluation script"
+	@echo "  eval             Run evaluation script (set EVAL_FILE=path)"
+	@echo "  eval-stability   Run stability evaluation script (set EVAL_FILE=path)"
 	@echo "  download-model   Download embedding model"
 	@echo "  embed-server     Start llama-server for embeddings"
 	@echo "  prereqs          Print prerequisite install instructions"
@@ -73,10 +73,16 @@ validate:
 	go run ./cmd/server/ validate
 
 eval:
-	./scripts/eval.sh
+ifndef EVAL_FILE
+	$(error EVAL_FILE is required. Usage: make eval EVAL_FILE=data/evals/evals.json)
+endif
+	./scripts/eval.sh $(EVAL_FILE)
 
 eval-stability:
-	./scripts/eval-stability.sh
+ifndef EVAL_FILE
+	$(error EVAL_FILE is required. Usage: make eval-stability EVAL_FILE=data/evals/evals.json)
+endif
+	./scripts/eval-stability.sh $(EVAL_FILE)
 
 # Embedding model defaults
 EMBED_MODEL ?= models/nomic-embed-text-v1.5.Q8_0.gguf

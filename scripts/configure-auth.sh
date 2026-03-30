@@ -38,14 +38,14 @@ if [[ ! -f "${CONFIG_TOML}" ]]; then
     exit 1
 fi
 
-# Extract values from JSON. Uses grep+sed to avoid requiring jq as a dependency.
-# Strips trailing whitespace, carriage returns, and commas.
+# Extract a string value from JSON by key.
+# Uses grep+sed, strips whitespace/CR. No jq dependency.
 extract_json_string() {
     local key="$1"
     local file="$2"
-    grep "\"${key}\"" "${file}" \
-        | sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' \
-        | tr -d '\r\n '
+    local value
+    value=$(grep "\"${key}\"" "${file}" | head -1 | sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | tr -d '\r')
+    echo -n "${value}"
 }
 
 REGION=$(extract_json_string "region" "${COGNITO_JSON}")
@@ -71,12 +71,13 @@ echo "  user_pool_id: ${USER_POOL_ID}"
 echo "  client_id:    ${CLIENT_ID}"
 
 # Replace values in config.toml.
-# Match lines like: region = "..." / user_pool_id = "..." / client_id = "..."
-# Only replaces the first occurrence of each (inside [auth] section).
-sed -i "s|^\(region = \)\"[^\"]*\"|\1\"${REGION}\"|" "${CONFIG_TOML}"
-sed -i "s|^\(user_pool_id = \)\"[^\"]*\"|\1\"${USER_POOL_ID}\"|" "${CONFIG_TOML}"
-sed -i "s|^\(client_id = \)\"[^\"]*\"|\1\"${CLIENT_ID}\"|" "${CONFIG_TOML}"
+# Match the full line: key = "any value" and replace with key = "new value".
+# Using ; as sed delimiter to avoid conflicts with URL characters.
+sed -i "s;^\(region = \)\".*\"\$;\1\"${REGION}\";" "${CONFIG_TOML}"
+sed -i "s;^\(user_pool_id = \)\".*\"\$;\1\"${USER_POOL_ID}\";" "${CONFIG_TOML}"
+sed -i "s;^\(client_id = \)\".*\"\$;\1\"${CLIENT_ID}\";" "${CONFIG_TOML}"
 
 echo ""
 echo "Updated ${CONFIG_TOML} [auth] section."
-echo "Verify with: grep -A5 '\\[auth\\]' ${CONFIG_TOML}"
+echo ""
+grep -A6 '^\[auth\]' "${CONFIG_TOML}" | head -7

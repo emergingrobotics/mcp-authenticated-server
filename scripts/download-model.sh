@@ -3,15 +3,16 @@ set -euo pipefail
 
 # EMBED-08: Download a GGUF model file to the models/ directory.
 
-MODEL_REPO="${1:-}"
-MODEL_FILE="${2:-}"
+DEFAULT_REPO="nomic-ai/nomic-embed-text-v1.5-GGUF"
+DEFAULT_FILE="nomic-embed-text-v1.5.Q8_0.gguf"
+
+MODEL_REPO="${1:-${DEFAULT_REPO}}"
+MODEL_FILE="${2:-${DEFAULT_FILE}}"
 MODELS_DIR="${MODELS_DIR:-$(dirname "$0")/../models}"
 
-if [[ -z "${MODEL_REPO}" ]]; then
-    echo "Usage: $0 <huggingface-repo> [model-filename]" >&2
-    echo "Example: $0 nomic-ai/nomic-embed-text-v1.5-GGUF nomic-embed-text-v1.5.Q4_K_M.gguf" >&2
-    exit 1
-fi
+echo "Repository: ${MODEL_REPO}"
+echo "File:       ${MODEL_FILE}"
+echo "Dest:       ${MODELS_DIR}"
 
 mkdir -p "${MODELS_DIR}"
 

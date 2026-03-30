@@ -78,7 +78,7 @@ eval-stability:
 	./scripts/eval-stability.sh
 
 download-model:
-	./scripts/download-model.sh
+	./scripts/download-model.sh $(MODEL_REPO) $(MODEL_FILE)
 
 prereqs:
 	@echo "Install a container engine (podman preferred):"

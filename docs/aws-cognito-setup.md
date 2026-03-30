@@ -2,7 +2,7 @@
 
 The MCP server authenticates all requests using JWT tokens issued by an AWS Cognito User Pool. You must provision a Cognito User Pool and App Client before the server can start.
 
-For detailed provisioning instructions and automation, see the **[emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito)** CLI tool.
+You can provision Cognito resources using the AWS Console, the AWS CLI, Terraform, CloudFormation, or any other method you prefer. The **[emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito)** CLI tool is offered as an optional convenience for quick setup -- it is not required and has no special integration with this project.
 
 ## Overview
 
@@ -16,9 +16,9 @@ The MCP server needs three values from Cognito:
 
 The server derives the JWKS URL and issuer automatically from these three values.
 
-## Option 1: Automated provisioning (recommended)
+## Option 1: Automated provisioning (optional convenience)
 
-The [emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito) CLI tool automates User Pool creation, App Client configuration, and user management via CloudFormation.
+The [emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito) CLI tool is a lightweight wrapper that automates User Pool creation, App Client configuration, and user management via CloudFormation. It is entirely optional -- you can skip this and use Option 2 or any other provisioning method instead.
 
 ### Install
 

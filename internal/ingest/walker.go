@@ -69,19 +69,28 @@ func Walk(dir string, opts WalkOptions) ([]FileEntry, error) {
 
 	var entries []FileEntry
 
-	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	// Use WalkDir instead of Walk to avoid following directory symlinks (CRIT-02).
+	// WalkDir calls os.Lstat (not os.Stat), so symlinks are reported correctly.
+	err = filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return nil // skip errors
 		}
 
 		relPath, _ := filepath.Rel(dir, path)
 
-		if info.IsDir() {
+		// Skip symlinks at directory and file level (ING-15)
+		if d.Type()&os.ModeSymlink != 0 {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		if d.IsDir() {
 			name := filepath.Base(path)
 			if excludeSet[name] {
 				return filepath.SkipDir
 			}
-			// Skip hidden directories (except root)
 			if path != dir && strings.HasPrefix(name, ".") {
 				return filepath.SkipDir
 			}
@@ -102,6 +111,10 @@ func Walk(dir string, opts WalkOptions) ([]FileEntry, error) {
 		}
 
 		// Check file size
+		info, err := d.Info()
+		if err != nil {
+			return nil
+		}
 		if opts.MaxFileSize > 0 && info.Size() > opts.MaxFileSize {
 			return nil
 		}
@@ -111,12 +124,7 @@ func Walk(dir string, opts WalkOptions) ([]FileEntry, error) {
 			return nil
 		}
 
-		// Skip symlinks (ING-15)
-		if info.Mode()&os.ModeSymlink != 0 {
-			return nil
-		}
-
-		// Read file with O_NOFOLLOW equivalent
+		// Read file with O_NOFOLLOW and path verification
 		content, err := readFileNoFollow(path, dir, opts.AllowedDirs)
 		if err != nil {
 			return nil // skip unreadable files

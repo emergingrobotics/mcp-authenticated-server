@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"time"
 )
 
@@ -29,7 +30,9 @@ func (s *PostgresQueryStore) ExecuteReadOnly(ctx context.Context, query string, 
 	}
 	defer tx.Rollback()
 
+	queryStart := time.Now()
 	rows, err := tx.QueryContext(ctx, query, params...)
+	slog.Debug("database query executed", "duration", time.Since(queryStart)) // OBS-04
 	if err != nil {
 		return nil, categorizeError(err)
 	}

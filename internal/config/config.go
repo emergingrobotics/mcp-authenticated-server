@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net"
 	"net/url"
 	"os"
 	"strings"
@@ -332,18 +333,20 @@ func (c *Config) Validate() error {
 	}
 
 	// URL scheme validation for outbound endpoints
+	// URL validation with SSRF mitigation (SEC-06)
+	// embed.host allows loopback when bundled=true (bundled llama-server on 127.0.0.1)
 	if c.Embed.Enabled && c.Embed.Host != "" {
-		if err := validateURLScheme(c.Embed.Host, "embed.host"); err != nil {
+		if err := validateURLScheme(c.Embed.Host, "embed.host", c.Embed.Server.Bundled); err != nil {
 			return err
 		}
 	}
 	if c.Reranker.Enabled && c.Reranker.Host != "" {
-		if err := validateURLScheme(c.Reranker.Host, "reranker.host"); err != nil {
+		if err := validateURLScheme(c.Reranker.Host, "reranker.host", false); err != nil {
 			return err
 		}
 	}
 	if c.Hyde.BaseURL != "" {
-		if err := validateURLScheme(c.Hyde.BaseURL, "hyde.base_url"); err != nil {
+		if err := validateURLScheme(c.Hyde.BaseURL, "hyde.base_url", false); err != nil {
 			return err
 		}
 	}
@@ -358,17 +361,47 @@ func (c *Config) Validate() error {
 	return nil
 }
 
-func validateURLScheme(rawURL, field string) error {
+func validateURLScheme(rawURL, field string, allowLoopback bool) error {
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return fmt.Errorf("%s: invalid URL: %w", field, err)
 	}
 	switch u.Scheme {
 	case "http", "https":
-		return nil
 	default:
 		return fmt.Errorf("%s: URL scheme must be http or https, got %q", field, u.Scheme)
 	}
+
+	// SSRF mitigation: block private/reserved IP ranges (SEC-06)
+	host := u.Hostname()
+	if host != "" && !allowLoopback {
+		ip := net.ParseIP(host)
+		if ip != nil && isPrivateIP(ip) {
+			return fmt.Errorf("%s: private/reserved IP addresses are not allowed: %s", field, host)
+		}
+	}
+
+	return nil
+}
+
+// isPrivateIP checks if an IP is in a private or reserved range.
+func isPrivateIP(ip net.IP) bool {
+	privateRanges := []struct {
+		network string
+	}{
+		{"10.0.0.0/8"},
+		{"172.16.0.0/12"},
+		{"192.168.0.0/16"},
+		{"169.254.0.0/16"},
+		{"127.0.0.0/8"},
+	}
+	for _, r := range privateRanges {
+		_, cidr, _ := net.ParseCIDR(r.network)
+		if cidr.Contains(ip) {
+			return true
+		}
+	}
+	return false
 }
 
 // IssuerURL derives the Cognito issuer URL from auth config.

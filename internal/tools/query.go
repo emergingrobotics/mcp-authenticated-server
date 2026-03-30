@@ -54,8 +54,8 @@ func NewQueryTool(store querystore.QueryStore, defaultLimit, maxLimit int, timeo
 
 			result, err := store.ExecuteReadOnly(ctx, p.Query, p.Params, p.Limit, timeout)
 			if err != nil {
-				// Log details server-side (SQL-07)
-				slog.Warn("query execution error", "error", err)
+				// Log details server-side at debug to avoid leaking query content (SQL-07, SEC-02)
+				slog.Debug("query execution error", "error", err)
 				return nil, fmt.Errorf("query execution failed")
 			}
 

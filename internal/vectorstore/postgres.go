@@ -200,6 +200,7 @@ func (s *PostgresStore) SetIVFFlatProbes(ctx context.Context, probes int) error 
 	if !indexExists {
 		return nil
 	}
+	// Safe: %d only formats integers; SET does not support $1 parameters in PostgreSQL.
 	_, err = s.db.ExecContext(ctx, fmt.Sprintf(`SET ivfflat.probes = %d`, probes))
 	return err
 }

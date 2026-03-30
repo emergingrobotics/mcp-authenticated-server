@@ -1,0 +1,129 @@
+# MCP Authenticated Server - Example Configuration
+# Copy to config.toml and edit with your settings:
+#   cp config.toml.example config.toml
+#   chmod 600 config.toml
+# Do NOT commit config.toml -- it is gitignored.
+
+[runtime]
+# Container engine: "podman" or "docker" (auto-detect if empty)
+engine = "podman"
+
+[server]
+# HTTP listen port
+port = "8080"
+# Log level: debug | info | warn | error
+log_level = "info"
+# Optional: path to TLS certificate (set both or neither)
+tls_cert = ""
+# Optional: path to TLS private key (set both or neither)
+tls_key = ""
+
+[database]
+# Database engine: "postgres" or "mssql"
+engine = "postgres"
+# Maximum number of open connections
+max_open_conns = 10
+# Maximum number of idle connections
+max_idle_conns = 5
+# Maximum connection lifetime
+conn_max_lifetime = "5m"
+
+[auth]
+# AWS region for Cognito
+region = "us-east-1"
+# Cognito User Pool ID
+user_pool_id = "us-east-1_EXAMPLE"
+# Cognito App Client ID
+client_id = "EXAMPLE_CLIENT_ID"
+# Token type to validate: "access" or "id"
+token_use = "access"
+# Server-wide group restriction (empty = no restriction)
+allowed_groups = []
+
+[auth.tool_groups]
+# Per-tool required Cognito groups (AUTH-11)
+# Users must belong to ALL listed groups to call the tool.
+# Empty list or omitted = any authenticated user may call.
+ingest_documents = ["admin"]
+# search_documents = []
+# query_data = []
+
+[embed]
+# Set to false to disable vector features entirely
+enabled = true
+# OpenAI-compatible embeddings API endpoint
+host = "http://127.0.0.1:8079"
+# Model name sent in /v1/embeddings request body
+model = "nomic-embed-text"
+# Embedding vector dimension
+dimension = 768
+# Prefix prepended to queries before embedding
+query_prefix = ""
+# Prefix prepended to passages before embedding
+passage_prefix = ""
+
+[embed.server]
+# true = start llama-server inside the container
+bundled = true
+# Path to the GGUF model file
+model_path = "/models/nomic-embed-text-v1.5.Q8_0.gguf"
+# Internal listen port (127.0.0.1 only)
+port = 8079
+# GPU layers: -1 = all GPU; 0 = CPU only
+gpu_layers = -1
+# Additional llama-server CLI flags (validated at startup)
+extra_flags = []
+
+[search]
+# IVFFlat probes per KNN query
+probes = 4
+# Candidates per search arm before RRF merge
+retrieval_pool_size = 20
+# Reciprocal Rank Fusion k-factor
+rrf_constant = 60
+
+[reranker]
+# Enable cross-encoder reranking
+enabled = false
+# Cross-encoder /rerank endpoint
+host = "http://localhost:8081"
+
+[guardrails]
+# Corpus topic description (empty = Level 1 disabled; requires embed.enabled)
+corpus_topic = ""
+# Level 1 topic-relevance threshold [0.0, 1.0]
+min_topic_score = 0.25
+# Level 2 match-score threshold [0.0, 1.0] (0 = disabled)
+min_match_score = 0.0
+
+[hyde]
+# Enable Hypothetical Document Embeddings
+enabled = false
+# LLM model for hypothesis generation
+model = "claude-haiku-4-5-20251001"
+# LLM API base URL (empty = default Anthropic endpoint)
+base_url = ""
+# System prompt for hypothesis generation (empty = built-in default)
+system_prompt = ""
+
+[ingest]
+# Approximate tokens per chunk
+chunk_size = 256
+# Chunks per embedding batch
+batch_size = 32
+# Skip files larger than this
+max_file_size = "1MiB"
+# Whitelist of base directories for ingestion
+allowed_dirs = ["/data"]
+# Allowed file extensions for ingestion
+allowed_extensions = [".txt", ".md", ".mdx", ".rst", ".go", ".py", ".js", ".ts", ".json", ".yaml", ".yml", ".toml", ".html", ".css", ".sh"]
+# Directories to exclude from ingestion
+excluded_dirs = ["node_modules", "vendor", ".git", "__pycache__"]
+
+[query]
+# Default row limit for query_data
+default_limit = 100
+# Hard cap on rows returned
+max_limit = 1000
+# Maximum total response body size for query results
+max_response_size = "10MiB"

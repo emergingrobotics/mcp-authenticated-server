@@ -1,0 +1,10 @@
+{
+  "user_pool_id": "us-east-1_EXAMPLE",
+  "client_id": "your-client-id-here",
+  "client_secret": "your-client-secret-here",
+  "domain": "your-domain-prefix",
+  "region": "us-east-1",
+  "scopes": ["openid"],
+  "callback_urls": ["http://localhost:8080/callback"],
+  "logout_urls": ["http://localhost:8080/logout"]
+}

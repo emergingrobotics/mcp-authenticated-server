@@ -1,0 +1,27 @@
+[
+  {
+    "query": "What authentication methods are supported?",
+    "expected": "OAuth2 client credentials and user password flows via AWS Cognito",
+    "criteria": "Result mentions OAuth2 or Cognito authentication"
+  },
+  {
+    "query": "How are document embeddings stored?",
+    "expected": "Embeddings are stored in PostgreSQL using the pgvector extension",
+    "criteria": "Result references pgvector or vector storage in PostgreSQL"
+  },
+  {
+    "query": "What embedding model is used for semantic search?",
+    "expected": "A GGUF-format model served by llama.cpp",
+    "criteria": "Result mentions GGUF, llama.cpp, or local embedding model"
+  },
+  {
+    "query": "How do you ingest a new document?",
+    "expected": "Documents are ingested via the MCP tools API, chunked, embedded, and stored",
+    "criteria": "Result describes an ingestion or indexing process"
+  },
+  {
+    "query": "What is the maximum chunk size for document processing?",
+    "expected": "Chunks are sized based on token limits appropriate for the embedding model",
+    "criteria": "Result mentions chunk size, token limits, or text splitting"
+  }
+]

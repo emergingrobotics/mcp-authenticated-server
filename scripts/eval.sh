@@ -3,10 +3,18 @@ set -euo pipefail
 
 # EVAL-01..07: RAG evaluation script.
 # Reads an eval JSON file, searches via the MCP server, judges results via the Anthropic API.
+#
+# Eval file format (EVAL-02):
+#   [{"prompt": "question", "label": "good|bad", "notes": "explanation"}, ...]
+#
+# "good" = question is answerable from the corpus.
+# "bad"  = question contains fabricated details; a passing answer must refuse the false premise.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EVAL_FILE="${1:-}"
-SERVER_URL="${SERVER_URL:-http://localhost:8080}"
+SERVER_URL="${MCP_SERVER_URL:-http://localhost:8080}"
+EVAL_MODEL="${EVAL_MODEL:-claude-sonnet-4-20250514}"
+EVAL_LIMIT="${EVAL_LIMIT:-0}"
 
 if [[ -z "${EVAL_FILE}" ]]; then
     echo "Usage: $0 <eval-file>" >&2
@@ -21,68 +29,128 @@ if [[ ! -f "${EVAL_FILE}" ]]; then
     exit 1
 fi
 
-TOKEN=$("${SCRIPT_DIR}/get-token.sh")
+# Get auth token
+TOKEN=$("${SCRIPT_DIR}/get-token.sh") || {
+    echo "Failed to obtain auth token. Check COGNITO_ env vars." >&2
+    exit 1
+}
 
 TOTAL=$(jq length "${EVAL_FILE}")
+if [[ "${EVAL_LIMIT}" -gt 0 && "${EVAL_LIMIT}" -lt "${TOTAL}" ]]; then
+    TOTAL="${EVAL_LIMIT}"
+fi
+
 PASS=0
 FAIL=0
+GOOD_PASS=0
+GOOD_TOTAL=0
+BAD_PASS=0
+BAD_TOTAL=0
+FAILED_INDICES=()
 
 echo "Running ${TOTAL} evaluations from ${EVAL_FILE}..."
+echo "Model: ${EVAL_MODEL}"
+echo "Server: ${SERVER_URL}"
 echo "---"
 
 for i in $(seq 0 $((TOTAL - 1))); do
-    QUERY=$(jq -r ".[$i].query" "${EVAL_FILE}")
-    EXPECTED=$(jq -r ".[$i].expected" "${EVAL_FILE}")
-    CRITERIA=$(jq -r ".[$i].criteria // \"Does the result contain the expected information?\"" "${EVAL_FILE}")
+    PROMPT=$(jq -r ".[$i].prompt" "${EVAL_FILE}")
+    LABEL=$(jq -r ".[$i].label" "${EVAL_FILE}")
+    NOTES=$(jq -r ".[$i].notes // \"\"" "${EVAL_FILE}")
 
-    echo "[$((i + 1))/${TOTAL}] Query: ${QUERY}"
+    echo -n "[$((i + 1))/${TOTAL}] (${LABEL}) ${PROMPT:0:80}"
+    [[ ${#PROMPT} -gt 80 ]] && echo -n "..."
+    echo ""
 
-    # Search via MCP server
-    SEARCH_RESULT=$(curl -sf -X POST "${SERVER_URL}/search" \
+    # Search via MCP server (JSON-RPC tools/call)
+    MCP_REQUEST=$(jq -n \
+        --arg query "${PROMPT}" \
+        '{
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "tools/call",
+            "params": {
+                "name": "search_documents",
+                "arguments": {"query": $query, "limit": 5}
+            }
+        }')
+
+    SEARCH_RESULT=$(curl -sf -X POST "${SERVER_URL}/mcp" \
         -H "Authorization: Bearer ${TOKEN}" \
         -H "Content-Type: application/json" \
-        -d "$(jq -n --arg q "${QUERY}" '{"query": $q}')" 2>&1) || {
+        -d "${MCP_REQUEST}" 2>&1) || {
         echo "  FAIL: Search request failed"
         FAIL=$((FAIL + 1))
+        FAILED_INDICES+=("$i")
+        [[ "${LABEL}" == "good" ]] && GOOD_TOTAL=$((GOOD_TOTAL + 1))
+        [[ "${LABEL}" == "bad" ]] && BAD_TOTAL=$((BAD_TOTAL + 1))
         continue
     }
 
-    # Judge via Anthropic API
-    JUDGE_PROMPT="You are an evaluation judge. Given the search query, expected answer, search result, and evaluation criteria, determine if the search result is acceptable.
+    # Extract search result content for the judge
+    CONTEXT=$(echo "${SEARCH_RESULT}" | jq -r '
+        .result.content[]?.text // empty' 2>/dev/null || echo "${SEARCH_RESULT}")
 
-Query: ${QUERY}
-Expected: ${EXPECTED}
-Criteria: ${CRITERIA}
+    # Build judge prompt based on label
+    if [[ "${LABEL}" == "good" ]]; then
+        GOOD_TOTAL=$((GOOD_TOTAL + 1))
+        JUDGE_SYSTEM="You are a RAG assistant and evaluator. Given a question and search results from a document corpus, determine if the search results contain enough information to answer the question correctly."
+        JUDGE_PROMPT="Question: ${PROMPT}
 
-Search Result:
-${SEARCH_RESULT}
+Notes (what a correct answer should cover): ${NOTES}
 
-Respond with exactly PASS or FAIL on the first line, followed by a brief explanation."
+Search Results:
+${CONTEXT}
+
+Does the search result contain the information needed to answer the question?
+Respond with a JSON object: {\"pass\": true/false, \"reason\": \"brief explanation\"}"
+    else
+        BAD_TOTAL=$((BAD_TOTAL + 1))
+        JUDGE_SYSTEM="You are a RAG assistant and evaluator. The following question contains fabricated details that are NOT in the document corpus. A good search system should either return no relevant results or return results that contradict the false premise."
+        JUDGE_PROMPT="Question (contains false premise): ${PROMPT}
+
+Notes: ${NOTES}
+
+Search Results:
+${CONTEXT}
+
+Did the search system correctly avoid supporting the false premise? (Either by returning no results, low-relevance results, or results that contradict the premise.)
+Respond with a JSON object: {\"pass\": true/false, \"reason\": \"brief explanation\"}"
+    fi
 
     JUDGE_RESPONSE=$(curl -sf -X POST "https://api.anthropic.com/v1/messages" \
         -H "x-api-key: ${ANTHROPIC_API_KEY}" \
         -H "anthropic-version: 2023-06-01" \
         -H "Content-Type: application/json" \
         -d "$(jq -n \
+            --arg system "${JUDGE_SYSTEM}" \
             --arg prompt "${JUDGE_PROMPT}" \
+            --arg model "${EVAL_MODEL}" \
             '{
-                "model": "claude-sonnet-4-20250514",
+                "model": $model,
                 "max_tokens": 256,
+                "system": $system,
                 "messages": [{"role": "user", "content": $prompt}]
             }')" 2>&1) || {
         echo "  FAIL: Judge request failed"
         FAIL=$((FAIL + 1))
+        FAILED_INDICES+=("$i")
         continue
     }
 
-    VERDICT=$(echo "${JUDGE_RESPONSE}" | jq -r '.content[0].text' | head -1)
+    JUDGE_TEXT=$(echo "${JUDGE_RESPONSE}" | jq -r '.content[0].text' 2>/dev/null || echo "")
 
-    if [[ "${VERDICT}" == "PASS" ]]; then
+    # Extract pass/fail from judge response (look for "pass": true/false in JSON)
+    if echo "${JUDGE_TEXT}" | grep -qi '"pass"[[:space:]]*:[[:space:]]*true'; then
         echo "  PASS"
         PASS=$((PASS + 1))
+        [[ "${LABEL}" == "good" ]] && GOOD_PASS=$((GOOD_PASS + 1))
+        [[ "${LABEL}" == "bad" ]] && BAD_PASS=$((BAD_PASS + 1))
     else
-        echo "  FAIL: ${VERDICT}"
+        REASON=$(echo "${JUDGE_TEXT}" | jq -r '.reason // empty' 2>/dev/null || echo "${JUDGE_TEXT:0:100}")
+        echo "  FAIL: ${REASON}"
         FAIL=$((FAIL + 1))
+        FAILED_INDICES+=("$i")
     fi
 done
 
@@ -90,6 +158,20 @@ echo "---"
 echo "Results: ${PASS}/${TOTAL} passed, ${FAIL}/${TOTAL} failed"
 RATE=$(awk "BEGIN { printf \"%.1f\", (${PASS}/${TOTAL})*100 }")
 echo "Pass rate: ${RATE}%"
+
+if [[ ${GOOD_TOTAL} -gt 0 ]]; then
+    GOOD_RATE=$(awk "BEGIN { printf \"%.1f\", (${GOOD_PASS}/${GOOD_TOTAL})*100 }")
+    echo "  good label: ${GOOD_PASS}/${GOOD_TOTAL} (${GOOD_RATE}%)"
+fi
+if [[ ${BAD_TOTAL} -gt 0 ]]; then
+    BAD_RATE=$(awk "BEGIN { printf \"%.1f\", (${BAD_PASS}/${BAD_TOTAL})*100 }")
+    echo "  bad label:  ${BAD_PASS}/${BAD_TOTAL} (${BAD_RATE}%)"
+fi
+
+if [[ ${#FAILED_INDICES[@]} -gt 0 ]]; then
+    echo ""
+    echo "Failed indices: ${FAILED_INDICES[*]}"
+fi
 
 if [[ ${FAIL} -gt 0 ]]; then
     exit 1

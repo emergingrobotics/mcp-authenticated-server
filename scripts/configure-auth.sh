@@ -67,9 +67,12 @@ CLIENT_SECRET=$(extract_json_string "client_secret" "${COGNITO_JSON}")
 # Try cognito_domain_prefix first, then fall back to a simple domain string.
 DOMAIN=$(extract_json_string "cognito_domain_prefix" "${COGNITO_JSON}")
 if [[ -z "${DOMAIN}" ]]; then
-    # Fall back to simple "domain" — only matches "domain": "string", not "domain": {
     DOMAIN=$(extract_json_string "domain" "${COGNITO_JSON}")
 fi
+
+# User extraction: aws-cognito JSON stores users in a "users" array.
+# Extract the first user's email for COGNITO_USERNAME.
+USERNAME=$(extract_json_string "email" "${COGNITO_JSON}")
 
 if [[ -z "${REGION}" ]]; then
     echo "Error: 'region' not found in ${COGNITO_JSON}" >&2
@@ -90,6 +93,7 @@ echo "  user_pool_id: ${USER_POOL_ID}"
 echo "  client_id:    ${CLIENT_ID}"
 echo "  client_secret: ${CLIENT_SECRET:+(set)}"
 echo "  domain:       ${DOMAIN:-(not set)}"
+echo "  username:     ${USERNAME:-(not found)}"
 
 # --- Update config.toml (server-side: how to validate tokens) ---
 
@@ -123,9 +127,22 @@ fi
     if [[ -n "${DOMAIN}" ]]; then
         echo "export COGNITO_DOMAIN=\"${DOMAIN}\""
     fi
+    if [[ -n "${USERNAME}" ]]; then
+        echo "export COGNITO_USERNAME=\"${USERNAME}\""
+    fi
 } >> "${ENVRC}"
 chmod 600 "${ENVRC}"
 
 echo ""
 echo "Updated ${ENVRC} with COGNITO_ environment variables."
+
+# Check if COGNITO_PASSWORD is already set; if not, warn the user.
+if ! grep -q '^export COGNITO_PASSWORD=' "${ENVRC}" 2>/dev/null; then
+    echo ""
+    echo "NOTE: COGNITO_PASSWORD is not set in ${ENVRC}."
+    echo "The user_password auth flow requires it. Add it manually:"
+    echo "  echo 'export COGNITO_PASSWORD=\"your-password\"' >> ${ENVRC}"
+fi
+
+echo ""
 echo "Run 'source ${ENVRC}' or use direnv to load them."

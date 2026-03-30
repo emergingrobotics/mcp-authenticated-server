@@ -47,11 +47,51 @@ Before running the MCP server you need:
 
 1. **llama-server** (or any OpenAI-compatible embedding endpoint) installed and in your PATH. Embedding inference requires bare-metal GPU access for acceptable performance. See [docs/installing-llama-server.md](docs/installing-llama-server.md) for installation instructions.
 
-2. **PostgreSQL 14+** with the [pgvector](https://github.com/pgvector/pgvector) extension (for vector mode), or **MS SQL Server 2019+** (SQL-only mode). The database is an external dependency -- you provision and run it yourself.
+2. **PostgreSQL 14+** with the [pgvector](https://github.com/pgvector/pgvector) extension (for vector mode), or **MS SQL Server 2019+** (SQL-only mode). The database is an external dependency -- you provision and run it yourself. See database setup below.
 
 3. **AWS Cognito User Pool** provisioned with an App Client. The server validates all requests against Cognito-issued JWTs. See [docs/aws-cognito-setup.md](docs/aws-cognito-setup.md) for setup instructions, or the [emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito) CLI tool for automated provisioning.
 
 4. **Go 1.23+** for building from source.
+
+## Database Setup
+
+### PostgreSQL with pgvector
+
+Install pgvector if you haven't already:
+
+```bash
+# Ubuntu/Debian
+sudo apt install postgresql-16-pgvector
+
+# Fedora/RHEL
+sudo dnf install pgvector_16
+
+# macOS (Homebrew)
+brew install pgvector
+```
+
+Create the database and enable the extension:
+
+```bash
+sudo -u postgres createdb mcp_server
+sudo -u postgres psql -d mcp_server -c 'CREATE EXTENSION IF NOT EXISTS vector'
+```
+
+Verify pgvector is installed:
+
+```bash
+sudo -u postgres psql -d mcp_server -c 'SELECT extversion FROM pg_extension WHERE extname = $$vector$$'
+```
+
+If your PostgreSQL user requires a password, set one:
+
+```bash
+sudo -u postgres psql -c "ALTER USER your_username WITH PASSWORD 'your_password'"
+```
+
+### MS SQL Server (SQL-only mode, no vector features)
+
+For MSSQL setup, create a read-only database user with SELECT and EXECUTE permissions only. Set `database.engine = "mssql"` in config.toml.
 
 ## Quick Start
 
@@ -77,8 +117,8 @@ chmod 600 config.toml
 # from your Cognito User Pool. See docs/aws-cognito-setup.md for details.
 
 # Set DATABASE_URL in your .envrc file.
-# Replace credentials and host with your actual PostgreSQL connection details:
-echo 'DATABASE_URL=postgres://user:password@localhost:5432/dbname?sslmode=disable' >> .envrc
+# Use the database you created in the "Database Setup" section above:
+echo 'export DATABASE_URL=postgres://your_username:your_password@localhost:5432/mcp_server?sslmode=disable' >> .envrc
 chmod 600 .envrc
 
 # 5. Apply schema

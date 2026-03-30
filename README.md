@@ -41,37 +41,17 @@ MCP Clients (Claude, agents, etc.)
    (or MS SQL Server)        (e.g., llama-server)
 ```
 
-## Embedding Server (External)
+## Prerequisites
 
-The embedding server is **not bundled** with the MCP server. Embedding inference requires bare-metal GPU access for acceptable performance; running it inside a container without GPU passthrough would be impractically slow.
+Before running the MCP server you need:
 
-### Recommended Setup: llama-server
+1. **llama-server** (or any OpenAI-compatible embedding endpoint) installed and in your PATH. See [docs/installing-llama-server.md](docs/installing-llama-server.md) for full installation instructions.
 
-1. Download a GGUF embedding model:
-   ```bash
-   make download-model
-   # Or manually: huggingface-cli download nomic-ai/nomic-embed-text-v1.5-GGUF nomic-embed-text-v1.5.Q8_0.gguf --local-dir models/
-   ```
+2. **PostgreSQL 14+** with the [pgvector](https://github.com/pgvector/pgvector) extension (for vector mode), or **MS SQL Server 2019+** (SQL-only mode). The `make container-up` command starts PostgreSQL automatically via compose.
 
-2. Start llama-server on the host (with GPU):
-   ```bash
-   llama-server \
-     --model models/nomic-embed-text-v1.5.Q8_0.gguf \
-     --embedding \
-     --port 8079 \
-     --host 0.0.0.0 \
-     --n-gpu-layers -1
-   ```
+3. **AWS Cognito User Pool** provisioned with an App Client. See [cognito/config.json.example](cognito/config.json.example).
 
-3. Set `embed.host` in `config.toml`:
-   ```toml
-   [embed]
-   enabled = true
-   host = "http://localhost:8079"
-   model = "nomic-embed-text"
-   ```
-
-Any OpenAI-compatible `/v1/embeddings` endpoint works (vLLM, TEI, OpenAI API, etc.).
+4. **Go 1.23+** for building from source.
 
 ## Quick Start
 
@@ -80,27 +60,35 @@ Any OpenAI-compatible `/v1/embeddings` endpoint works (vLLM, TEI, OpenAI API, et
 git clone <repo-url>
 cd mcp-authenticated-server
 
-# 2. Start an embedding server (see above)
+# 2. Download the embedding model
 make download-model
-llama-server -m models/nomic-embed-text-v1.5.Q8_0.gguf --embedding --port 8079
 
-# 3. Configure
+# 3. Start the embedding server (separate terminal, bare metal for GPU)
+make embed-server
+
+# 4. Configure
 cp config.toml.example config.toml
 chmod 600 config.toml
-# Edit config.toml: set embed.host, [auth], DATABASE_URL env var
+# Edit config.toml: set [auth] section from your Cognito outputs
+# Set DATABASE_URL in your environment or .env file
 
-# 4. Start local infrastructure
-make container-up  # PostgreSQL + MCP server
+# 5. Start PostgreSQL (if not already running)
+make container-up
 
-# 5. Apply schema
+# 6. Apply schema
 make schema
 
-# 6. Ingest documents
+# 7. Ingest documents
 make ingest DIR=./data
 
-# 7. Run evaluations
+# 8. Run the MCP server
+make run
+
+# 9. Run evaluations (optional)
 make eval
 ```
+
+The embedding server (`make embed-server`) runs as a long-lived process in a separate terminal. It must be running before ingestion or search will work. Any OpenAI-compatible `/v1/embeddings` endpoint works as an alternative (vLLM, TEI, OpenAI API, etc.) -- just set `embed.host` in `config.toml`.
 
 ## Build
 

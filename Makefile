@@ -1,6 +1,6 @@
 .PHONY: help build test test-integration test-coverage lint govulncheck run \
        container-build container-up container-down container-logs \
-       ingest schema validate eval eval-stability download-model prereqs clean
+       ingest schema validate eval eval-stability download-model embed-server prereqs clean
 
 # Auto-detect container engine: prefer podman, fall back to docker.
 ENGINE ?= $(shell command -v podman >/dev/null 2>&1 && echo podman || echo docker)
@@ -26,6 +26,7 @@ help:
 	@echo "  eval             Run evaluation script"
 	@echo "  eval-stability   Run stability evaluation script"
 	@echo "  download-model   Download embedding model"
+	@echo "  embed-server     Start llama-server for embeddings"
 	@echo "  prereqs          Print prerequisite install instructions"
 	@echo "  clean            Remove build artifacts and coverage files"
 
@@ -77,8 +78,24 @@ eval:
 eval-stability:
 	./scripts/eval-stability.sh
 
+# Embedding model defaults
+EMBED_MODEL ?= models/nomic-embed-text-v1.5.Q8_0.gguf
+EMBED_PORT  ?= 8079
+EMBED_HOST  ?= 127.0.0.1
+EMBED_GPU   ?= -1
+
 download-model:
 	./scripts/download-model.sh $(MODEL_REPO) $(MODEL_FILE)
+
+embed-server:
+	@command -v llama-server >/dev/null 2>&1 || { echo "llama-server not found in PATH. See docs/installing-llama-server.md"; exit 1; }
+	@test -f $(EMBED_MODEL) || { echo "Model not found: $(EMBED_MODEL). Run 'make download-model' first."; exit 1; }
+	llama-server \
+		--model $(EMBED_MODEL) \
+		--embedding \
+		--port $(EMBED_PORT) \
+		--host $(EMBED_HOST) \
+		--n-gpu-layers $(EMBED_GPU)
 
 prereqs:
 	@echo "Install a container engine (podman preferred):"

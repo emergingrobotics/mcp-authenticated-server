@@ -98,7 +98,29 @@ aws cognito-idp admin-add-user-to-group \
 
 ## Transfer values to config.toml
 
-Copy the three values into your `config.toml`:
+### Automatic (from aws-cognito JSON file)
+
+If you have a Cognito JSON config file (from `aws-cognito` or created manually), the `configure-auth.sh` script reads `region`, `user_pool_id`, and `client_id` from it and writes them into your `config.toml`:
+
+```bash
+cp config.toml.example config.toml
+chmod 600 config.toml
+./scripts/configure-auth.sh cognito/config.json config.toml
+```
+
+The JSON file must contain at minimum:
+
+```json
+{
+  "region": "us-east-1",
+  "user_pool_id": "us-east-1_aBcDeFgH",
+  "client_id": "1a2b3c4d5e6f7g8h"
+}
+```
+
+### Manual
+
+Edit `config.toml` directly with the three values from your Cognito setup:
 
 ```toml
 [auth]

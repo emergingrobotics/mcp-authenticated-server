@@ -69,8 +69,15 @@ make embed-server
 # 4. Configure
 cp config.toml.example config.toml
 chmod 600 config.toml
-# Edit config.toml: set [auth] section from your Cognito outputs
-# Set DATABASE_URL in your environment or .env file
+
+# If you have an aws-cognito JSON config file, import auth values automatically:
+./scripts/configure-auth.sh cognito/config.json config.toml
+
+# Or edit config.toml manually -- set [auth] region, user_pool_id, client_id
+# from your Cognito User Pool. See docs/aws-cognito-setup.md for details.
+
+# Set DATABASE_URL in your environment or .env file:
+echo 'DATABASE_URL=postgres://mcp:mcp@localhost:5432/mcp?sslmode=disable' >> .env
 
 # 5. Start PostgreSQL (if not already running)
 make container-up

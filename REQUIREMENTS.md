@@ -519,7 +519,7 @@ timeout = "30s"                    # per-query timeout (max 5m)
 |----|------------|
 | BUILD-01 | The project MUST build as a single static Go binary. Go 1.23 or later. The `go.mod` directive MUST specify `go 1.23` as the minimum. |
 | BUILD-02 | The project MUST include a multi-stage `Containerfile` (with a `Dockerfile` symlink for Docker compatibility) that: (a) compiles the Go binary, (b) produces a final image on a pinned `debian:bookworm-slim@sha256:...` base, running as non-root. The embedding server is external and NOT included in this image. |
-| BUILD-03 | The project MUST include a `compose.yml` for local development with: the MCP server and PostgreSQL + pgvector. The compose file SHOULD include an example embedding service or document how to run one alongside. |
+| BUILD-03 | The project MUST include a `compose.yml` for running the MCP server container. The database and embedding server are external dependencies managed by the operator. |
 | BUILD-04 | The `Makefile` MUST include targets: `build`, `test`, `test-integration`, `test-coverage`, `lint`, `govulncheck`, `run`, `container-build`, `container-up`, `container-down`, `container-logs`, `ingest`, `schema`, `validate`, `eval`, `eval-stability`, `download-model`, `prereqs`. |
 | BUILD-05 | Makefile targets MUST auto-detect the container engine (podman preferred) and use it consistently. An `ENGINE` variable MUST allow override: `make container-up ENGINE=docker`. |
 
@@ -535,7 +535,7 @@ mcp-authenticated-server/
 ├── Makefile
 ├── Containerfile                    # Multi-stage build (Go server only)
 ├── Dockerfile -> Containerfile      # Symlink for Docker compatibility
-├── compose.yml                      # Local dev stack (server + postgres)
+├── compose.yml                      # MCP server container (DB + embed server are external)
 ├── go.mod                           # Single module at root
 ├── go.sum
 ├── config.toml.example              # Documented example config (mode 0600)
@@ -850,7 +850,7 @@ aws-cognito -c  # Creates User Pool + App Client
 # Copy outputs to config.toml [auth] section
 
 # 6. Start local infrastructure
-make container-up  # PostgreSQL + MCP server
+make container-up  # Start the MCP server container
 
 # 7. Apply schema
 make schema

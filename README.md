@@ -47,7 +47,7 @@ Before running the MCP server you need:
 
 1. **llama-server** (or any OpenAI-compatible embedding endpoint) installed and in your PATH. Embedding inference requires bare-metal GPU access for acceptable performance. See [docs/installing-llama-server.md](docs/installing-llama-server.md) for installation instructions.
 
-2. **PostgreSQL 14+** with the [pgvector](https://github.com/pgvector/pgvector) extension (for vector mode), or **MS SQL Server 2019+** (SQL-only mode). The `make container-up` command starts PostgreSQL automatically via compose.
+2. **PostgreSQL 14+** with the [pgvector](https://github.com/pgvector/pgvector) extension (for vector mode), or **MS SQL Server 2019+** (SQL-only mode). The database is an external dependency -- you provision and run it yourself.
 
 3. **AWS Cognito User Pool** provisioned with an App Client. The server validates all requests against Cognito-issued JWTs. See [docs/aws-cognito-setup.md](docs/aws-cognito-setup.md) for setup instructions, or the [emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito) CLI tool for automated provisioning.
 
@@ -76,21 +76,18 @@ chmod 600 config.toml
 # Or edit config.toml manually -- set [auth] region, user_pool_id, client_id
 # from your Cognito User Pool. See docs/aws-cognito-setup.md for details.
 
-# Set DATABASE_URL in your .env file.
-# This example matches the compose.yml PostgreSQL defaults (user: mcp, password: mcp, db: mcp):
-echo 'DATABASE_URL=postgres://mcp:mcp@localhost:5432/mcp?sslmode=disable' >> .env
-chmod 600 .env
+# Set DATABASE_URL in your .envrc file.
+# Replace credentials and host with your actual PostgreSQL connection details:
+echo 'DATABASE_URL=postgres://user:password@localhost:5432/dbname?sslmode=disable' >> .envrc
+chmod 600 .envrc
 
-# 5. Start PostgreSQL (if not already running)
-make container-up
-
-# 6. Apply schema
+# 5. Apply schema
 make schema
 
-# 7. Ingest documents
+# 6. Ingest documents
 make ingest DIR=./data
 
-# 8. Run the MCP server
+# 7. Run the MCP server
 make run
 
 # 9. Run evaluations (optional)

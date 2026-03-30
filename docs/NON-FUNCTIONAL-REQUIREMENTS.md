@@ -65,7 +65,7 @@ Extracted from REQUIREMENTS.md for quick reference. Requirement IDs map back to 
 - Single static Go binary; Go 1.23+ (go.mod: go 1.23)
 - Multi-stage Containerfile: Go compile + final debian:bookworm-slim (pinned SHA256, non-root). Embedding server is external.
 - Dockerfile symlink -> Containerfile
-- compose.yml: MCP server + PostgreSQL + pgvector (embedding server external)
+- compose.yml: MCP server container (database and embedding server are external)
 - Makefile targets: build, test, test-integration, test-coverage, lint, govulncheck, run, container-build, container-up, container-down, container-logs, ingest, schema, validate, eval, eval-stability, download-model, prereqs
 - ENGINE variable for container engine override
 

@@ -1,6 +1,7 @@
-# Local development stack: MCP server + PostgreSQL.
-# The embedding server (e.g., llama-server) must be run separately.
-# See README.md for embedding server setup instructions.
+# MCP server container.
+# The database and embedding server are external dependencies
+# and must be running before starting this container.
+# See README.md for prerequisites.
 
 services:
   server:
@@ -10,27 +11,5 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - .envrc
     restart: unless-stopped
-
-  postgres:
-    image: pgvector/pgvector:pg16
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-mcp}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mcp}
-      POSTGRES_DB: ${POSTGRES_DB:-mcp}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mcp}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  pgdata:

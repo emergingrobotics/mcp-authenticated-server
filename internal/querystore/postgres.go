@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -96,6 +97,10 @@ func (s *PostgresQueryStore) ExecuteReadOnly(ctx context.Context, query string, 
 func categorizeError(err error) error {
 	if err == nil {
 		return nil
+	}
+	// Check for timeout (ERR-11)
+	if err == context.DeadlineExceeded || errors.Is(err, context.DeadlineExceeded) {
+		return fmt.Errorf("query timeout")
 	}
 	errStr := err.Error()
 	// Syntax errors are safe to return (SQL-07)

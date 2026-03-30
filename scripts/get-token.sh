@@ -52,10 +52,21 @@ case "${FLOW}" in
         : "${COGNITO_USERNAME:?Set COGNITO_USERNAME}"
         : "${COGNITO_PASSWORD:?Set COGNITO_PASSWORD}"
 
+        # Build auth parameters
+        AUTH_PARAMS="USERNAME=${COGNITO_USERNAME},PASSWORD=${COGNITO_PASSWORD}"
+
+        # If the App Client has a secret, compute SECRET_HASH (required by Cognito)
+        if [[ -n "${COGNITO_CLIENT_SECRET:-}" ]]; then
+            SECRET_HASH=$(printf '%s%s' "${COGNITO_USERNAME}" "${COGNITO_CLIENT_ID}" \
+                | openssl dgst -sha256 -hmac "${COGNITO_CLIENT_SECRET}" -binary \
+                | base64)
+            AUTH_PARAMS="${AUTH_PARAMS},SECRET_HASH=${SECRET_HASH}"
+        fi
+
         RESPONSE=$(aws cognito-idp initiate-auth \
             --client-id "${COGNITO_CLIENT_ID}" \
             --auth-flow USER_PASSWORD_AUTH \
-            --auth-parameters "USERNAME=${COGNITO_USERNAME},PASSWORD=${COGNITO_PASSWORD}" \
+            --auth-parameters "${AUTH_PARAMS}" \
             --region "${COGNITO_REGION}" \
             --output json 2>&1) || {
             echo "InitiateAuth failed:" >&2

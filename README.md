@@ -76,8 +76,10 @@ chmod 600 config.toml
 # Or edit config.toml manually -- set [auth] region, user_pool_id, client_id
 # from your Cognito User Pool. See docs/aws-cognito-setup.md for details.
 
-# Set DATABASE_URL in your environment or .env file:
+# Set DATABASE_URL in your .env file.
+# This example matches the compose.yml PostgreSQL defaults (user: mcp, password: mcp, db: mcp):
 echo 'DATABASE_URL=postgres://mcp:mcp@localhost:5432/mcp?sslmode=disable' >> .env
+chmod 600 .env
 
 # 5. Start PostgreSQL (if not already running)
 make container-up

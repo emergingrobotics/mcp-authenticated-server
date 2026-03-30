@@ -35,6 +35,48 @@ TOKEN=$("${SCRIPT_DIR}/get-token.sh") || {
     exit 1
 }
 
+# Initialize MCP session (required handshake before tools/call)
+INIT_REQUEST=$(jq -n '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {},
+        "clientInfo": {"name": "eval-script", "version": "1.0"}
+    }
+}')
+
+INIT_HEADERS=$(mktemp)
+trap 'rm -f "${INIT_HEADERS}"' EXIT
+
+curl -sf -X POST "${SERVER_URL}/mcp" \
+    -H "Authorization: Bearer ${TOKEN}" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json, text/event-stream" \
+    -D "${INIT_HEADERS}" \
+    -d "${INIT_REQUEST}" > /dev/null 2>&1 || {
+    echo "Failed to initialize MCP session" >&2
+    exit 1
+}
+
+SESSION_ID=$(grep -i "^Mcp-Session-Id:" "${INIT_HEADERS}" | tr -d '\r\n' | sed 's/^[^:]*: *//')
+rm -f "${INIT_HEADERS}"
+
+if [[ -z "${SESSION_ID}" ]]; then
+    echo "No Mcp-Session-Id in initialize response" >&2
+    exit 1
+fi
+
+# Send initialized notification to complete handshake
+curl -sf -X POST "${SERVER_URL}/mcp" \
+    -H "Authorization: Bearer ${TOKEN}" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json, text/event-stream" \
+    -H "Mcp-Session-Id: ${SESSION_ID}" \
+    -H "Mcp-Protocol-Version: 2025-06-18" \
+    -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' > /dev/null 2>&1
+
 TOTAL=$(jq length "${EVAL_FILE}")
 if [[ "${EVAL_LIMIT}" -gt 0 && "${EVAL_LIMIT}" -lt "${TOTAL}" ]]; then
     TOTAL="${EVAL_LIMIT}"
@@ -78,6 +120,9 @@ for i in $(seq 0 $((TOTAL - 1))); do
     SEARCH_RESULT=$(curl -sf -X POST "${SERVER_URL}/mcp" \
         -H "Authorization: Bearer ${TOKEN}" \
         -H "Content-Type: application/json" \
+        -H "Accept: application/json, text/event-stream" \
+        -H "Mcp-Session-Id: ${SESSION_ID}" \
+        -H "Mcp-Protocol-Version: 2025-06-18" \
         -d "${MCP_REQUEST}" 2>&1) || {
         echo "  FAIL: Search request failed"
         FAIL=$((FAIL + 1))
@@ -87,9 +132,16 @@ for i in $(seq 0 $((TOTAL - 1))); do
         continue
     }
 
+    # Extract JSON from SSE response (data: lines) or use as-is if already JSON
+    if echo "${SEARCH_RESULT}" | grep -q '^data: '; then
+        SEARCH_JSON=$(echo "${SEARCH_RESULT}" | grep '^data: ' | sed 's/^data: //' | head -1)
+    else
+        SEARCH_JSON="${SEARCH_RESULT}"
+    fi
+
     # Extract search result content for the judge
-    CONTEXT=$(echo "${SEARCH_RESULT}" | jq -r '
-        .result.content[]?.text // empty' 2>/dev/null || echo "${SEARCH_RESULT}")
+    CONTEXT=$(echo "${SEARCH_JSON}" | jq -r '
+        .result.content[]?.text // empty' 2>/dev/null || echo "${SEARCH_JSON}")
 
     # Build judge prompt based on label
     if [[ "${LABEL}" == "good" ]]; then

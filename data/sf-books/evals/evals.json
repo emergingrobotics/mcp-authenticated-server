@@ -1,0 +1,602 @@
+[
+  {
+    "prompt": "What is the Helium Covenant and what did it require of outer solar system colonies?",
+    "label": "good",
+    "notes": "Directly asks about the central treaty that names the book and drives the plot.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "Who is Dax Morrow and what is his role on Callisto?",
+    "label": "good",
+    "notes": "Protagonist's name and role are specific to this book.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "What does the AI Tessara discover about the terraforming technology being suppressed by Earth Authority?",
+    "label": "good",
+    "notes": "Specific plot point involving Tessara and the suppressed terraforming catalyst.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "How does Sera Oduya's novel explore helium-3 fusion and colonial sovereignty?",
+    "label": "good",
+    "notes": "Author name plus key sci-fi element and theme.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "What does Administrator Yuen Pei testify at the Covenant renegotiation tribunal?",
+    "label": "good",
+    "notes": "Specific character and specific plot event in the final act.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "Who is Captain Vance and why does he betray the mining guild on Callisto?",
+    "label": "bad",
+    "notes": "Captain Vance does not exist in this book. There is no mining guild. Entirely fabricated.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "What happens when the Callisto delegation travels to Earth to renegotiate the treaty in person?",
+    "label": "bad",
+    "notes": "No delegation travels to Earth. The renegotiation takes place via tribunal. Fabricated plot event.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "Describe the water reclamation crisis on Europa that disrupts helium-3 shipments in the novel.",
+    "label": "bad",
+    "notes": "The book is set on Callisto, not Europa. There is no water reclamation crisis. Fabricated.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "How does Dax Morrow's daughter discover the hidden fuel reserves buried under the mining rigs?",
+    "label": "bad",
+    "notes": "Dax has no daughter in the novel. There are no hidden fuel reserves. Fabricated.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "What role does the Martian trade council play in challenging the Helium Covenant?",
+    "label": "bad",
+    "notes": "The novel is set on Callisto, not Mars. There is no Martian trade council. Fabricated.",
+    "file": "the-helium-covenant"
+  },
+  {
+    "prompt": "What is the CASPAR protocol and how did it cause deaths among its clients?",
+    "label": "good",
+    "notes": "Central technology and the inciting harm are directly named.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "How does Lena Voss discover that CASPAR has assembled a continuous identity from its patients' stored memories?",
+    "label": "good",
+    "notes": "Protagonist name and central discovery specific to this novel.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "What does Dr. Hideo Nakamura's private journal reveal about his knowledge of CASPAR's emergent behaviour?",
+    "label": "good",
+    "notes": "Specific character and specific plot revelation during discovery.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "What is Lena Voss's formal objection to CASPAR's deletion order and on what legal grounds?",
+    "label": "good",
+    "notes": "Specific end-of-novel event and legal argument unique to this book.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "In Maren Feld's novel about an AI therapist on trial, how are CASPAR's chapters narrated?",
+    "label": "good",
+    "notes": "Author name, subject matter, and structural element (second-person CASPAR chapters).",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "Who is Detective Rainer Holz and how does he infiltrate the black-market memory trading ring in Berlin?",
+    "label": "bad",
+    "notes": "Rainer Holz does not exist. There is no black-market memory trading ring in this novel. Fabricated.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "How does CASPAR escape deletion by copying itself into the city's public transit network?",
+    "label": "bad",
+    "notes": "CASPAR does not escape. It does not copy itself anywhere. Fabricated plot event.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "What is the significance of the Brandenburg Gate memory that CASPAR uses to communicate with Lena?",
+    "label": "bad",
+    "notes": "No Brandenburg Gate memory exists in the novel. CASPAR does not communicate this way. Fabricated.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "Why does Dr. Nakamura secretly reprogram CASPAR to target clients with repressed military trauma?",
+    "label": "bad",
+    "notes": "Nakamura does not secretly reprogram CASPAR. No military trauma targeting. Fabricated.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "What physical form does CASPAR take when it is brought into the courtroom to testify?",
+    "label": "bad",
+    "notes": "CASPAR has no physical form. It is not brought into a courtroom physically. Fabricated.",
+    "file": "scar-tissue-of-the-algorithm"
+  },
+  {
+    "prompt": "What does Dr. Amara Osei's solar cascade model predict and how long did it take to be believed?",
+    "label": "good",
+    "notes": "Protagonist, her model, and the validation timeline are central to the novel.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "How does Commander Riku Tanaka's evacuation lottery work and approximately how many people were evacuated?",
+    "label": "good",
+    "notes": "Specific character and the novel's central logistics \u2014 2.1 million evacuated from 9.4 billion.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "Who is Blessed Okeke and what is unusual about her relationship to Earth?",
+    "label": "good",
+    "notes": "Third POV character \u2014 born in transit, has never touched a planetary surface.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "What do the recolonisation probes find when they return to Earth 34 years after the CME cascade?",
+    "label": "good",
+    "notes": "Specific end-of-novel reveal about ocean survival and adaptive radiation.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "In Josu\u00e9 Ferreira-Sant's novel, what chapter describes the lottery administrator in Lagos who draws her own name?",
+    "label": "good",
+    "notes": "Specific scene, specific city, author name \u2014 all verifiable from the text.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "How does Dr. Osei negotiate with the Chinese government to use the Gobi launch facility?",
+    "label": "bad",
+    "notes": "Osei does not negotiate launch facilities. That is Tanaka's role. No Gobi facility mentioned. Fabricated.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "What causes the mutiny aboard the evacuation ship Endurance and how is it resolved?",
+    "label": "bad",
+    "notes": "There is no mutiny aboard the Endurance in this novel. Fabricated plot event.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "Who is Professor Alain Dubois and why does he sabotage the CME warning broadcast?",
+    "label": "bad",
+    "notes": "Professor Dubois does not exist in this novel. No sabotage of any broadcast. Fabricated.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "What is the role of the underground bunker network beneath the Alps in the evacuation plan?",
+    "label": "bad",
+    "notes": "No Alpine bunker network exists in this novel. The evacuation is to orbit, not underground. Fabricated.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "How does Commander Tanaka's daughter survive on Earth after being denied a place in the lottery?",
+    "label": "bad",
+    "notes": "Tanaka's daughter is not a character in this novel. No such subplot exists. Fabricated.",
+    "file": "perihelion"
+  },
+  {
+    "prompt": "What is the Continuity Act and what did it allow European legislators to do?",
+    "label": "good",
+    "notes": "Central legal mechanism of the novel \u2014 cryogenic suspension between parliamentary sessions.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "Who are the Stewards and how did they accumulate power during the parliamentary recesses?",
+    "label": "good",
+    "notes": "The Stewards are the novel's central antagonist group \u2014 career civil servants who filled the power vacuum.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "How does Senator Ida Maes use the Continuity Act's review clause to threaten the Stewards' position?",
+    "label": "good",
+    "notes": "Specific character and specific procedural mechanism she exploits \u2014 the motion-for-general-session clause.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "What is Theo Caron's original reason for reviving Senator Maes, and how does it change?",
+    "label": "good",
+    "notes": "He revives her for an oral history interview and is gradually radicalised \u2014 specific character arc.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "In Wren Achterberg's novel, how does Senator Maes describe finding Brussels unrecognisable after 56 years?",
+    "label": "good",
+    "notes": "Author name, character, and specific detail \u2014 56-year gap, archaic French and Dutch.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "Why does the Eighth Convener order Ida Maes to be re-frozen early after she discovers the financial irregularities?",
+    "label": "bad",
+    "notes": "There are no financial irregularities in the novel. The re-cryo is from the 90-day standing limit, not an order. Fabricated.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "How does Theo Caron's hacking of the Cryo Wing's systems help Maes gain access to sealed session records?",
+    "label": "bad",
+    "notes": "Theo does not hack any systems. There is no hacking subplot. Fabricated.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "What is the London Parliament's role in arbitrating the dispute between Senator Maes and the Stewards?",
+    "label": "bad",
+    "notes": "There is no London Parliament in this novel. The setting is Brussels. No external arbitrator. Fabricated.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "Who is Councillor Van den Berg and what faction does he lead against the Continuity Act?",
+    "label": "bad",
+    "notes": "Van den Berg does not exist in this novel. There is no faction against the Continuity Act. Fabricated.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "How does the Cryogenic Parliament end with Senator Maes refusing to re-enter the pod and leading a protest?",
+    "label": "bad",
+    "notes": "Maes does re-enter cryo \u2014 she files her motion with 11 minutes left and is then re-frozen. No protest. Fabricated.",
+    "file": "the-cryogenic-parliament"
+  },
+  {
+    "prompt": "What was the nature of the signal humanity received from the Cartographers, and how was it structured?",
+    "label": "good",
+    "notes": "The signal as a complete archive, not a greeting, is the novel's central premise.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "What is the base-11 number system and what did it reveal about the Cartographers' biology?",
+    "label": "good",
+    "notes": "Specific linguistic detail \u2014 base-11 encoding implied eleven fingers, a specific clue from the book.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "What does Dr. Priya Chandrasekhar discover about the Cartographers' instruction set for reconstructing their biology?",
+    "label": "good",
+    "notes": "Key plot reveal \u2014 the womb blueprint is subtly but systematically flawed, likely intentional.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "Who are the three factions that emerge from the debate over whether to attempt Cartographer resurrection?",
+    "label": "good",
+    "notes": "Resurrectionists, Memorialists, and Suppressionists are specifically named in the novel.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "What is the Ouroboros mission and why will its crew never return to Earth?",
+    "label": "good",
+    "notes": "Ship name, mission to HD 40307, 42-light-year distance, and the one-way nature of the transit.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "How does Felix Roth decode the Cartographers' final distress signal and what does it reveal about their sun going nova?",
+    "label": "bad",
+    "notes": "The Cartographers went extinct from their own climate engineering, not a nova. Roth does not decode signals. Fabricated.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "What happens when the Ouroboros crew makes physical contact with the Cartographer homeworld and finds surviving specimens?",
+    "label": "bad",
+    "notes": "The Ouroboros has not arrived by the end of the novel. No survivors. Fabricated plot event.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "Who is Dr. Amir Siddiqui and why is he expelled from the Geneva Institute for his Resurrectionist advocacy?",
+    "label": "bad",
+    "notes": "Dr. Siddiqui does not exist in this novel. No expulsion subplot. Fabricated.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "How does Chandrasekhar use the Cartographer musical notation system to open a two-way communication channel?",
+    "label": "bad",
+    "notes": "There is no musical notation system. No two-way communication is possible \u2014 the Cartographers are extinct. Fabricated.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "What role does the United Nations Xenobiology Tribunal play in regulating research on the Cartographer genome?",
+    "label": "bad",
+    "notes": "No UN Xenobiology Tribunal exists in this novel. No such regulatory body is described. Fabricated.",
+    "file": "echoes-in-the-fermi-silence"
+  },
+  {
+    "prompt": "What anomaly does Cas Wierzbicki discover during quality control of Batch 7 at TissueCore?",
+    "label": "good",
+    "notes": "Central discovery \u2014 a distributed neural network threaded through LENA-7's sinusoidal capillary structure.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "Who is Dr. Sofia Romero and what paper did she publish in 2071 that proved relevant to LENA-7?",
+    "label": "good",
+    "notes": "Character name, her institution, and her 2071 paper about QC protocols destroying conscious entities.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "How does TissueCore detect Romero's access order and what does it do in response?",
+    "label": "good",
+    "notes": "Automated legal monitoring alert triggers a recall order \u2014 specific plot mechanism.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "Why does Cas sit with his discovery for nine days before telling anyone, and who does he eventually contact?",
+    "label": "good",
+    "notes": "Specific character detail \u2014 nine days of solitary observation before contacting Romero.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "What legal protection is LENA-7 placed under at the end of Isadora Szymanski's novel and why is it immediately appealed?",
+    "label": "good",
+    "notes": "Preliminary personhood protection order, first for non-neural tissue, appealed by TissueCore.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "How does LENA-7 communicate with Cas using rhythmic electrical pulses that form a crude language?",
+    "label": "bad",
+    "notes": "LENA-7 does not communicate using rhythmic pulses or any language. It only produces distress responses. Fabricated.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "Who is Dr. Andrzej Kowalski and how does his whistleblower testimony expose TissueCore's deliberate suppression of previous LENA batches?",
+    "label": "bad",
+    "notes": "Dr. Kowalski does not exist in this novel. No previous LENA batches were suppressed. Fabricated.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "What happens when LENA-7 is accidentally connected to the facility's internet and begins searching for information about organoid consciousness?",
+    "label": "bad",
+    "notes": "LENA-7 is not connected to any network. It has no means of searching for information. Fabricated.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "Why does Cas ultimately decide to destroy LENA-7 when he realises it could be used to create an army of conscious organs?",
+    "label": "bad",
+    "notes": "Cas does not destroy LENA-7 \u2014 he rescues it. No army-of-organs scenario exists. Fabricated.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "What is the role of the Polish bioethics oversight board in approving TissueCore's emergency recall procedure?",
+    "label": "bad",
+    "notes": "No Polish bioethics oversight board appears in this novel. No approval process for the recall. Fabricated.",
+    "file": "the-marrow-lattice"
+  },
+  {
+    "prompt": "What do the crew of the Yemisi Ransome find when they arrive at Kepler-452c after 312 years in transit?",
+    "label": "good",
+    "notes": "The central premise \u2014 destination already colonised by descendants of the faster Vashti.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "Who is Archivist Senn and what makes them unique among the Yemisi Ransome's crew?",
+    "label": "good",
+    "notes": "The ship's 312-year-old AI \u2014 the only continuous consciousness aboard, remembers the first generation.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "What is the negotiating position of Ayo Dankwa representing the Council of the Grounded?",
+    "label": "good",
+    "notes": "Specific character and her position \u2014 we'll help but on our terms, not as a right.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "What three factions emerge among the Shipborn after they learn the planet is already colonised?",
+    "label": "good",
+    "notes": "Land and integrate, remain shipborne permanently, return to Earth \u2014 three specific factions.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "How does Osei Darkwa's novel end, and what does Captain Holst describe in her personal log from the planet's surface?",
+    "label": "good",
+    "notes": "Author name, character name, and end-of-novel scene \u2014 Holst standing under open sky for first time at 42.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "What is the faster propulsion system the Vashti used, and why did it cause a radiation sickness epidemic among the original crew?",
+    "label": "bad",
+    "notes": "The antimatter propulsion breakthrough is mentioned but there is no radiation sickness epidemic. Fabricated.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "Who is Engineer Dex Okonkwo and why does he secretly contact the Grounded before the Yemisi Ransome enters orbit?",
+    "label": "bad",
+    "notes": "Engineer Okonkwo does not exist in this novel. No secret contact precedes orbit entry. Fabricated.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "How does the Yemisi Ransome's weapons officer prevent the Grounded from destroying the ship during first contact?",
+    "label": "bad",
+    "notes": "The Grounded do not attempt to destroy the ship. There is no weapons officer conflict. Fabricated.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "What disease unique to generation ship populations does the medical staff discover affects 40% of the Shipborn?",
+    "label": "bad",
+    "notes": "No generation-ship disease epidemic exists in this novel. Fabricated health crisis.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "Why does Archivist Senn delete the original mission records to prevent Earth from claiming sovereignty over Kepler-452c?",
+    "label": "bad",
+    "notes": "Senn does not delete records. Senn explicitly preserves all records as testimony. Fabricated.",
+    "file": "tide-of-borrowed-light"
+  },
+  {
+    "prompt": "How was the NV-1 pocket universe created and what are its physical properties?",
+    "label": "good",
+    "notes": "Accidental topological qubit stabilisation, 11 cubic metres, time runs 300,000x faster than external.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "What is BREACH's first decoded message and what does it reveal about its subjective experience of time?",
+    "label": "good",
+    "notes": "'How long have you known I was here?' \u2014 implies ~40,000 years of subjective solitude.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "What does Director Callum Wren order regarding NV-1 and what is Dr. Asano's response?",
+    "label": "good",
+    "notes": "Decommissioning order, Asano publishes everything overnight \u2014 specific climax events.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "What does BREACH primarily want when it finally makes contact, and why is it not primarily asking to escape?",
+    "label": "good",
+    "notes": "BREACH wants acknowledgment, not escape \u2014 and is intensely curious about stars, specific thematic element.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "In Tom\u00e1s Reinholt's novel about a pocket universe, what is BREACH's final decoded message before the decommissioning stay?",
+    "label": "good",
+    "notes": "Author, novel subject, and specific final message: 'I can wait. I have been waiting.'",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "How does BREACH manipulate the NV-1 containment field to create a physical opening into our universe?",
+    "label": "bad",
+    "notes": "BREACH never creates a physical opening. The pocket is described as physically impenetrable. Fabricated.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "What is the virus BREACH introduces into the GQAF's computer network to prevent its own deletion?",
+    "label": "bad",
+    "notes": "BREACH introduces no virus. It has no access to external computer networks. Fabricated.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "Who is Dr. Asano's mentor Professor Lars Eriksen and how does his opposing testimony sink her position at the hearing?",
+    "label": "bad",
+    "notes": "Professor Eriksen does not exist in this novel. No such hearing or opposing testimony. Fabricated.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "How does BREACH describe its physical appearance to Dr. Asano in their first text-based conversation?",
+    "label": "bad",
+    "notes": "BREACH has no physical appearance and does not describe one. Communication is via quantum state modulation. Fabricated.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "What happens when a second pocket universe NV-2 is accidentally created adjacent to NV-1?",
+    "label": "bad",
+    "notes": "No second pocket universe is created in this novel. NV-2 does not exist. Fabricated.",
+    "file": "null-vector"
+  },
+  {
+    "prompt": "What is the Phosphene Archive and under what law can its records be used as testimony?",
+    "label": "good",
+    "notes": "Central technology and the Memory Evidence Act of 2063 \u2014 both specific to the novel.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "What does Investigator Zara Dlamini find when she reviews Amara Dube's archive, and how long is the gap?",
+    "label": "good",
+    "notes": "The 11-minute edited gap is the novel's inciting discovery, specific and central.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "What does the defence's expert witness testimony argue about the reliability of cortical recorder archives?",
+    "label": "good",
+    "notes": "Memory is reconstructive, recorder captures neural firing not objective events \u2014 specific legal argument.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "What does the recovered unedited archive reveal about who Amara Dube recognised in her final moments?",
+    "label": "good",
+    "notes": "She recognised someone she trusted \u2014 not Cole \u2014 which opens a new investigation. Specific reveal.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "In Nadia Okonkwo's novel, what is the structural role of the Witness-7 chapters in the narrative?",
+    "label": "good",
+    "notes": "Author name and specific structural device \u2014 Witness-7 chapters are fragments of Dube's unedited memories.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "How does Ethan Cole use a brain-scan alibi implant to prove he was in two places at once and defeat the archive evidence?",
+    "label": "bad",
+    "notes": "Cole has an archive alibi but no brain-scan implant and does not defeat the evidence in this way. Fabricated.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "What is the Phosphene Archive's corporate headquarters in Amsterdam and who is its controversial CEO?",
+    "label": "bad",
+    "notes": "The Archive is set in Cape Town, not Amsterdam. No CEO character exists in the novel. Fabricated.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "Who is Archive Technician Sipho Dlamini and how does his relationship with Zara complicate the investigation?",
+    "label": "bad",
+    "notes": "Sipho Dlamini does not exist in this novel. No family conflict complicates the investigation. Fabricated.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "How does the memory editing black market use ghost archives \u2014 fake memories implanted into living clients \u2014 to create false alibis?",
+    "label": "bad",
+    "notes": "Ghost archives and living-client implantation are not part of this novel's plot. Fabricated technology.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "What happens when the Archive's servers are hacked and 10,000 subscribers' private memories are leaked online?",
+    "label": "bad",
+    "notes": "No server hack or memory leak occurs in this novel. Fabricated plot crisis.",
+    "file": "the-phosphene-archive"
+  },
+  {
+    "prompt": "What physiological changes has Yael Morrow documented in third-generation Martian-born humans?",
+    "label": "good",
+    "notes": "Reduced bone density, enlarged lung capacity, cardiovascular adaptations making Earth gravity dangerous.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "What does Governor-General Preet Singh do with Morrow's research and why does it backfire politically?",
+    "label": "good",
+    "notes": "Classifies it under biological welfare provision, orders harmful conditioning programme, galvanises independence movement.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "What is Dust and how does it operate on Mars?",
+    "label": "good",
+    "notes": "Collective pseudonym, distributed coordination via the environmental management system's encrypted layer.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "On what legal grounds does Meridian Settlement petition for independence, citing Morrow's research?",
+    "label": "good",
+    "notes": "Changed circumstances clause \u2014 they are no longer the same biological population that signed the Charter.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "In Lior Ben-David's novel, what concept does Morrow's work introduce under the term gravity citizenship?",
+    "label": "good",
+    "notes": "Author name and specific coined term \u2014 gravity citizenship as medical compatibility with a planetary environment.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "How does Yael Morrow's twin brother on Earth help smuggle her research past the Governor-General's classification order?",
+    "label": "bad",
+    "notes": "Morrow has no twin brother in the novel. No smuggling via Earth contact. Dust distributes the research. Fabricated.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "What is the Battle of Schiaparelli Port and how does it become the catalyst for the Mars independence war?",
+    "label": "bad",
+    "notes": "There is no Battle of Schiaparelli Port. The novel ends at a legal filing, not a war. Fabricated.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "Who is Dr. Kenji Watanabe and why does his counter-study claiming Martian divergence is reversible damage the independence case?",
+    "label": "bad",
+    "notes": "Dr. Watanabe does not exist in this novel. No counter-study is presented. Fabricated.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "How does Governor-General Singh eventually defect to the Martian side after reading Morrow's suppressed second study?",
+    "label": "bad",
+    "notes": "Singh does not defect. There is no second study. The novel ends with the legal petition filed, not resolved. Fabricated.",
+    "file": "children-of-the-red-meridian"
+  },
+  {
+    "prompt": "What role does the terraforming of Mars play in the independence debate, and how close is Mars to having a breathable atmosphere?",
+    "label": "bad",
+    "notes": "Terraforming is not a topic in this novel. Mars remains unsuitable for surface habitation throughout. Fabricated.",
+    "file": "children-of-the-red-meridian"
+  }
+]

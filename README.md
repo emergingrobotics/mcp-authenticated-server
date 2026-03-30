@@ -150,6 +150,136 @@ Set `embed.enabled = true` in config.toml (the default) to register the vector t
 
 The embedding server (`make embed-server`) runs as a long-lived process in a separate terminal. Any OpenAI-compatible `/v1/embeddings` endpoint works as an alternative (vLLM, TEI, OpenAI API, etc.) -- just set `embed.host` in `config.toml`.
 
+## HyDE (Hypothetical Document Embeddings)
+
+HyDE improves semantic search by expanding the user query into a hypothetical document passage before embedding. Instead of embedding the raw query (which is typically short and keyword-like), the server asks Claude to generate a 2-3 sentence passage that would answer the question, then embeds that passage. This produces an embedding closer to the actual document space, improving retrieval accuracy.
+
+### Enabling HyDE
+
+1. Set `ANTHROPIC_API_KEY` in your environment:
+
+```bash
+echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> .envrc
+source .envrc
+```
+
+2. Enable in `config.toml`:
+
+```toml
+[hyde]
+enabled = true
+model = "claude-haiku-4-5-20251001"
+```
+
+If `ANTHROPIC_API_KEY` is not set, HyDE silently falls back to raw query passthrough (no error, no degradation).
+
+### Configuration
+
+```toml
+[hyde]
+# Master switch (default: false)
+enabled = false
+
+# LLM model for hypothesis generation (default: claude-haiku-4-5-20251001)
+model = "claude-haiku-4-5-20251001"
+
+# Override Anthropic API base URL (default: empty = api.anthropic.com)
+# Useful for proxies or compatible endpoints.
+base_url = ""
+
+# Custom system prompt (default: empty = built-in prompt)
+# The built-in prompt instructs Claude to write a 2-3 sentence answer
+# as if it appeared verbatim in the documentation.
+system_prompt = ""
+```
+
+### How it works in the pipeline
+
+1. User query arrives at `search_documents`
+2. Claude generates a hypothetical passage answering the query
+3. The passage is embedded using the passage prefix (instead of query prefix)
+4. The resulting embedding is used for KNN vector search
+5. Full-text search still uses the raw query for lexical matching
+6. Both arms are merged via RRF as usual
+
+### Reloading
+
+The `[hyde]` section is reloadable via SIGHUP, except `base_url` which requires a restart.
+
+## Cross-Encoder Reranking
+
+The reranker is an optional post-retrieval step that rescores search results using a cross-encoder model. Cross-encoders jointly encode the (query, document) pair, producing more accurate relevance scores than the embedding-based similarity used for initial retrieval. This improves precision at the cost of one additional HTTP call per search.
+
+### Running a reranker server
+
+The reranker is an external HTTP service exposing a `POST /rerank` endpoint. Any server implementing this API works. For example, using a Hugging Face cross-encoder model via a Python server:
+
+```bash
+# Example using a cross-encoder model (you provide this service)
+# The server must accept POST /rerank with:
+#   {"query": "...", "documents": ["...", "..."], "top_n": 5}
+# And return:
+#   {"results": [{"index": 0, "relevance_score": 0.95}, ...]}
+```
+
+### Enabling the reranker
+
+Set the reranker host and enable it in `config.toml`:
+
+```toml
+[reranker]
+enabled = true
+host = "http://localhost:8081"
+```
+
+### Configuration
+
+```toml
+[reranker]
+# Master switch (default: false)
+enabled = false
+
+# HTTP endpoint serving POST /rerank (default: http://localhost:8081)
+host = "http://localhost:8081"
+```
+
+### How it works in the pipeline
+
+1. KNN and full-text search results are merged via Reciprocal Rank Fusion (RRF)
+2. The merged candidate texts are sent to the reranker with the original query
+3. The reranker returns relevance scores from the cross-encoder
+4. Results are re-sorted by cross-encoder score
+5. Level 2 guardrail (min_match_score) is applied to the reranked scores
+
+### Failure behavior
+
+If the reranker is unreachable, returns a non-200 status, or returns unparseable output, the server logs a warning and falls back to RRF scores. Search results are still returned -- reranker failure is non-fatal.
+
+### Reranker API contract
+
+The reranker endpoint must implement:
+
+**Request** (`POST /rerank`):
+```json
+{
+  "query": "user's search query",
+  "documents": ["chunk 1 text", "chunk 2 text", "..."],
+  "top_n": 5
+}
+```
+
+**Response** (`200 OK`):
+```json
+{
+  "results": [
+    {"index": 0, "relevance_score": 0.95},
+    {"index": 2, "relevance_score": 0.87}
+  ]
+}
+```
+
+`index` refers to the position in the input `documents` array. `relevance_score` is a float in `[0.0, 1.0]`.
+
 ## Build
 
 ```bash

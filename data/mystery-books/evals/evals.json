@@ -1,0 +1,602 @@
+[
+  {
+    "prompt": "Who was Marcus Hale and what financial crime had he committed against the Whitmore estate?",
+    "label": "good",
+    "notes": "Hale is the killer; his embezzlement of approximately fourteen thousand pounds over eleven years is the motive.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "How was the locked-room mystery in Reginald Whitmore's study solved?",
+    "label": "good",
+    "notes": "The mechanism — wire threaded through the keyhole to turn the lock from outside — is the central physical puzzle.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "What announcement did Reginald Whitmore make at dinner that set his murder in motion?",
+    "label": "good",
+    "notes": "The will revision announcement is the inciting event; the text describes it in detail.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "Who is Constance Fairweather and what investigative method does she use?",
+    "label": "good",
+    "notes": "Constance is the protagonist; her method of 'the arithmetic of a story' is described explicitly.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "What role does Viktor Szendy serve as a red herring in The Whitmore Affair?",
+    "label": "good",
+    "notes": "The text explicitly discusses Szendy as exploiting 1930s anxieties about foreign capital and Central European intrigue.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "What role did the Whitmore family's chauffeur play in concealing evidence from Constance Fairweather?",
+    "label": "bad",
+    "notes": "There is no chauffeur character in this novel; the detail is entirely fabricated.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "How did Reginald Whitmore's estranged brother attempt to claim the estate after his death?",
+    "label": "bad",
+    "notes": "Reginald has no estranged brother in the novel; this character and plot element do not exist.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "What secret society did Marcus Hale belong to that gave him access to the poison?",
+    "label": "bad",
+    "notes": "Hale belongs to no secret society; the poison was introduced via the brandy decanter during routine access to the study.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "What was the significance of the missing portrait Constance discovers in the east wing?",
+    "label": "bad",
+    "notes": "There is no missing portrait or east wing scene in the novel; the detail is invented.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "Why did Constance Fairweather eventually reconcile with Inspector Morley before the novel's end?",
+    "label": "bad",
+    "notes": "There is no reconciliation scene with Morley described; the detail is fabricated.",
+    "file": "01-the-whitmore-affair"
+  },
+  {
+    "prompt": "What was Protocol VZ-7 and why did Marco Valdez consider it significant?",
+    "label": "good",
+    "notes": "VZ-7 is the central document of the novel; the text describes it as a set of clinical trial data management procedures modified to conceal adverse event data.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "How did Renata Valdez's professional background as a forensic accountant help her investigate her brother's death?",
+    "label": "good",
+    "notes": "Her forensic accounting skills are described explicitly as her primary investigative tool throughout the novel.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "Who was Dr. Sylvia Crane and what was her motive for falsifying the Cerelyne trial data?",
+    "label": "good",
+    "notes": "Crane is the true killer; her motive — protecting both financial interests and her professional identity — is analyzed at length.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "What role did Dr. Priscilla Okafor play in Renata's investigation of her brother's death?",
+    "label": "good",
+    "notes": "Okafor is a former FDA investigator who kept copies of all whistleblower complaints, including Marco's, and provides the routing records.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "What was Meridian Advisory Group, and how did Renata identify its payments as suspicious?",
+    "label": "good",
+    "notes": "Meridian Advisory Group is a Delaware LLC that received a $47,000 payment in the same month the adverse event data was removed; Renata identifies it through NovaBridge's public filings.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "What was the name of the Senate committee that ultimately subpoenaed NovaBridge's records?",
+    "label": "bad",
+    "notes": "No Senate committee appears in the novel; Renata brings evidence to a House Energy and Commerce Committee staffer, not to a Senate body.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "How did Robert Tennyson eventually help Renata after his initial hostility?",
+    "label": "bad",
+    "notes": "Tennyson remains a red herring throughout; there is no scene in which he actively helps Renata.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "What evidence did Agent Foulds find that directly linked Dr. Messing to the Cerelyne data falsification?",
+    "label": "bad",
+    "notes": "Foulds does not discover direct evidence against Messing independently; Messing's role is established through Renata's documentary investigation.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "What was the significance of the thumb drive Marco hid in his gym locker before his death?",
+    "label": "bad",
+    "notes": "Marco hid the thumb drive inside a statistics textbook in his apartment, not in a gym locker; the gym locker detail is invented.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "How did the FDA's Office of Criminal Investigations bring criminal charges against Argent Consulting Services?",
+    "label": "bad",
+    "notes": "The novel does not depict charges being brought against Argent; the criminal accountability thread is left deliberately unresolved.",
+    "file": "02-the-valdez-protocol"
+  },
+  {
+    "prompt": "Who was Reginald Foss and what was the twenty-year secret that motivated him to kill Aldous Kempe?",
+    "label": "good",
+    "notes": "Foss is the killer; his role as a double agent for the Austro-Hungarian intelligence service beginning in 1867 is the novel's central revelation.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "How did Inspector Cora Naismith discover that the Terminus Club registry had been altered?",
+    "label": "good",
+    "notes": "Naismith visits the registry and uses graphological analysis to identify the altered ink and letter forms; this is the case-breaking discovery.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "What were the cipher fragments found in Aldous Kempe's coat pockets, and what did their analysis reveal?",
+    "label": "good",
+    "notes": "The fragments are partially reconstructed working notes identifying a key leak dated to 1867–1871, requiring access to both British key schedules and Austrian response patterns.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "Who was Count Miklós Esterházy-Wirth and what role did he play in Foss's recruitment?",
+    "label": "good",
+    "notes": "Esterházy-Wirth recruited Foss in Vienna in 1867, framing intelligence sharing as enlightened diplomacy rather than treason.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "How did Arthur Machen-Tully function as a red herring in The Meridian Cipher?",
+    "label": "good",
+    "notes": "Machen-Tully had a public quarrel with Kempe, a false alibi explained by a secret affair, and professional bitterness — all making him a plausible but incorrect suspect.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "What was the name of the Austrian spy who eventually betrayed Reginald Foss to British intelligence?",
+    "label": "bad",
+    "notes": "No Austrian spy betrays Foss; his guilt is established through documentary evidence and his own written confession.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "How did Commissioner Monro use the findings from the Kempe case to reform the Foreign Office cipher room?",
+    "label": "bad",
+    "notes": "No institutional reform of the cipher room is depicted; the novel ends with Foss's confession and arrest without depicting further consequences.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "What personal tragedy in Inspector Naismith's past led her to specialize in Special Enquiries cases?",
+    "label": "bad",
+    "notes": "Naismith joined Special Enquiries through competence and the patronage of Commissioner Monro; no specific personal tragedy is given as the reason.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "What was the Meridian Society and how was it connected to the Fenian bombing campaign?",
+    "label": "bad",
+    "notes": "There is no Meridian Society in the novel; the title refers to the cipher, not an organization.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "How did Oliver Sparke eventually join Naismith's investigation as an official constable?",
+    "label": "bad",
+    "notes": "Sparke assists with cipher decoding as a Foreign Office employee but does not become a constable; this career transition does not occur in the novel.",
+    "file": "03-the-meridian-cipher"
+  },
+  {
+    "prompt": "What was the forgery at the center of The Glass Archivist and how was it authenticated?",
+    "label": "good",
+    "notes": "The contested First Folio is the central forgery; Voss's authentication process — initial doubts, outside consultant's report, revised endorsement under pressure — is described in detail.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "How did Dr. Petra Voss engineer the locked-room mystery at the Calloway Archive vault?",
+    "label": "good",
+    "notes": "Voss used a flexible rod through the 4.3-millimetre door gap to engage the manual deadbolt from outside, tested on two earlier evenings.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "What was the climate control reboot technique Voss used to bypass the vault's biometric lock?",
+    "label": "good",
+    "notes": "A manual override of the climate control system triggered a biometric sensor reboot creating a 90-second keypad-only window; described explicitly in the investigation.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "What leverage did Magnus Calloway have over Dr. Voss for seven years and how did he use it?",
+    "label": "good",
+    "notes": "Calloway had recordings of Voss expressing doubts about the Folio's authenticity; he used the tapes as implicit blackmail to keep her from going public.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "Who was Fenwick Crane and why was he present at the Calloway Archive auction?",
+    "label": "good",
+    "notes": "Crane was a rare book dealer whose business Calloway destroyed in 2015; he attended as a guest of a bidder and had a convincing if delayed alibi.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "What alternative First Folio had Professor Dunmore located in St Andrews to use as a comparison piece?",
+    "label": "bad",
+    "notes": "Dunmore has no comparison Folio; his dispute with Calloway concerns misappropriated Scottish manuscript maps, not a competing Folio.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "How did Christopher Dunbar-Knox's legal team ultimately sue the Calloway Archive for the fraudulent sale?",
+    "label": "bad",
+    "notes": "The novel ends with Voss's arrest; the legal proceedings between Dunbar-Knox and the Archive are not depicted.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "What role did the Archive's original security contractor play in discovering the vault mechanism flaw?",
+    "label": "bad",
+    "notes": "The contractor designed the vault but plays no role in the investigation; the door gap is discovered by Mullane's forensic team.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "How did Raquel Ife's early suspicion of Dr. Voss save her from becoming a second victim?",
+    "label": "bad",
+    "notes": "Ife does not develop early suspicion of Voss and is never in danger of becoming a victim; this plot element does not exist.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "What financial irregularities did the Scotsman newspaper article reveal about the Calloway Archive?",
+    "label": "bad",
+    "notes": "The Scotsman article concerns the Folio's authenticity, not financial irregularities; that framing is invented.",
+    "file": "04-the-glass-archivist"
+  },
+  {
+    "prompt": "Who was Gene Tillis and what smuggling operation had he been running through Harwick harbor?",
+    "label": "good",
+    "notes": "Tillis is the killer; his eleven-year operation evolving from contraband goods to fentanyl in sealed bait containers is described in detail.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "How did Mara Doyle's professional background shape her immediate response to finding Clem Farris's body?",
+    "label": "good",
+    "notes": "Her homicide detective instincts take over before her emotions — she catalogues wound evidence, clothing saturation patterns, and restraint marks before calling it in.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "What was the significance of the hidden compartments found on the lobster boat Ruthanne?",
+    "label": "good",
+    "notes": "The compartments were installed during a maintenance period by Tillis without Clem's knowledge and used for drug smuggling; their discovery is central to the case.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "What did the full autopsy results reveal that contradicted the initial drowning verdict for Clem Farris?",
+    "label": "good",
+    "notes": "The autopsy found death from a subdural hematoma from blunt impact and fresh water in the lungs — not salt water — proving the body was placed after death.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "Who was Ray Costas and what did his presence in Harwick reveal to Mara Doyle?",
+    "label": "good",
+    "notes": "Costas was a DEA informant posing as a marine insurance investigator; his presence revealed a drug smuggling investigation was already underway on the coast.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "What was the specific misconduct allegation against Mara Doyle that ended her Boston career?",
+    "label": "bad",
+    "notes": "The novel does not specify the constructed misconduct charges; it says only that her superior spent two years making her life unlivable before she resigned.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "What was the name of the fentanyl supplier who used Harwick's harbor as a transit point?",
+    "label": "bad",
+    "notes": "No upstream supplier is named in the novel; the narrative focuses on Tillis's operation rather than identifying its supply chain.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "How did Deputy Hennessey officially reconcile with Doyle after their professional conflict?",
+    "label": "bad",
+    "notes": "The novel describes a mutual understanding that falls short of friendship, not a formal reconciliation; no reconciliation scene exists.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "What evidence did Danny Farris find on his father's boat that he initially withheld from authorities?",
+    "label": "bad",
+    "notes": "Danny withholds his whereabouts on the night of the death, not physical evidence from the boat; this fabricated detail does not appear in the novel.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "How did Tidewater Holdings development company respond publicly when Gene Tillis was arrested?",
+    "label": "bad",
+    "notes": "Tidewater Holdings is a real estate development company in the waterfront dispute subplot, but its response to Tillis's arrest is not depicted in the novel.",
+    "file": "05-the-saltwater-witness"
+  },
+  {
+    "prompt": "What evidence had Renato Sanzio assembled against Aldo Vestri before his death at Carnevale?",
+    "label": "good",
+    "notes": "Sanzio had found footage Vestri shot for the German authorities during the occupation, including footage of roundups, documented in the sealed envelope in his cloak.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "How did Commissario Valli's wartime history give him a particular understanding of the Vestri case?",
+    "label": "good",
+    "notes": "Valli was a low-level occupation functionary who kept his head down; this experience makes him uniquely able to understand Vestri's moral architecture and uniquely reluctant to arrest him.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "Why was the mask found on Sanzio's body significant to the investigation?",
+    "label": "good",
+    "notes": "The ivory silk mask with silver water-lily thread belonged to Giulia Foscari, establishing her connection to the murder scene and making her either a suspect or a witness.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "Who was Giulia Foscari and why did she flee to her cousin in Mestre after the Carnevale party?",
+    "label": "good",
+    "notes": "Giulia was Sanzio's companion; she fled not because she witnessed the murder but because she read something in Vestri's expression in the aftermath that frightened her.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "What was in the sealed envelope found sewn inside the lining of Sanzio's Carnevale cloak?",
+    "label": "good",
+    "notes": "The envelope contained a note to journalist Cesare Arnone and a document describing Vestri as the man who filmed the Mira family roundup for the German authorities in 1943.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "What was the wartime organization through which Vestri was originally recruited as a collaborator?",
+    "label": "bad",
+    "notes": "Vestri was not recruited by an organization; he made individual decisions under German occupation as a cameraman seeking protection and film stock.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "How did the Venice Film Festival revoke Vestri's honorary award after his conviction?",
+    "label": "bad",
+    "notes": "No such revocation is depicted; the novel ends with Vestri's arrest and does not describe subsequent cultural or institutional consequences.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "What role did the Austrian consul play in attempting to protect Vestri after Valli's investigation?",
+    "label": "bad",
+    "notes": "No Austrian consul appears in the novel; there is no diplomatic interference with the investigation.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "What neo-fascist organization was Valli investigating that turned out to be sheltering Vestri's documentation?",
+    "label": "bad",
+    "notes": "No neo-fascist organization appears in the novel; this is a fabricated plot element.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "How did Marco Ferrante's stolen ring from Sanzio's finger ultimately help prove Vestri's guilt?",
+    "label": "bad",
+    "notes": "The stolen ring establishes Ferrante's lesser guilt and functions as misdirection; it plays no role in proving Vestri's guilt.",
+    "file": "06-the-carnevale-mask"
+  },
+  {
+    "prompt": "Who was Dr. Howard Kessler and what was his motive for committing four murders over three years?",
+    "label": "good",
+    "notes": "Kessler is Miriam's mentor and the true killer; his motive — generating real data for his manuscript 'The Architecture of Compulsion' — is described in detail.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "What was the manuscript 'The Architecture of Compulsion' and why was it central to Kessler's crimes?",
+    "label": "good",
+    "notes": "It was Kessler's decade-long theoretical work on violent psychological profiles; he claimed he needed live data that case files alone could not provide.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "How did Miriam Adeyemi's long mentorship under Kessler become a vulnerability in solving the case?",
+    "label": "good",
+    "notes": "Her professional identity was conditioned by deference to Kessler's conclusions; she had been trained since graduate school to treat his approval as validation.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "Who was Callum Devereaux and how did he function as a red herring throughout The Vantage Point?",
+    "label": "good",
+    "notes": "Devereaux is Miriam's therapy patient with a sealed juvenile record; he is constructed to be misread as the killer but is exactly what he claims to be.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "What professional tension did Miriam face between her therapeutic duty of confidentiality and her suspicion of a patient?",
+    "label": "good",
+    "notes": "Miriam's growing belief that Devereaux is the killer conflicts with patient confidentiality; the novel describes this as constitutive of her professional identity, not merely procedural.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "What was the specific psychological profile type that Kessler's framework identified as a 'compulsion trigger'?",
+    "label": "bad",
+    "notes": "The manuscript's specific framework and profile categories are not defined in detail in the novel; this is a fabricated technical detail.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "How did Tobias Adeyemi-Wells help Miriam access Kessler's university office files during the investigation?",
+    "label": "bad",
+    "notes": "Tobias plays no role in accessing Kessler's files; his function in the novel is as a mirror for Miriam's blind spots, not as an investigative aide.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "What was the name of the DEA informant who tipped off Detective Osei about Marco Estevez?",
+    "label": "bad",
+    "notes": "No DEA informant exists in the novel; Marco Estevez is a narcotics suspect Osei has been investigating through her own unit's work.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "How did Miriam's CPD supervisor respond when she first raised concerns about Kessler to them?",
+    "label": "bad",
+    "notes": "Miriam does not report her suspicions to a CPD supervisor; the novel notes there is no institutional mechanism for such a report given Kessler's standing.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "What medication was found in Kessler's home laboratory that linked him to the Patricia Hale death?",
+    "label": "bad",
+    "notes": "No home laboratory is described in the novel; the link to Kessler is established through documentary and psychological evidence, not physical laboratory evidence.",
+    "file": "07-the-vantage-point"
+  },
+  {
+    "prompt": "Who was Edwin Pryce and what was his reason for killing Sir Reginald Pemberton?",
+    "label": "good",
+    "notes": "Pryce is the club steward for 31 years whose son Thomas was wrongfully executed; he killed Pemberton in a rage without realizing the memoir would have vindicated Thomas.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "What was the significance of Thomas Pryce in the moral argument of The Brass Key?",
+    "label": "good",
+    "notes": "Thomas was Edwin's son, convicted and hanged at 22 on fabricated charges of insubordination for refusing to participate in a wartime atrocity; his story is the novel's moral center.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "Who were the club members implicated in Pemberton's memoir and what had they done?",
+    "label": "good",
+    "notes": "Ashford-Colles, Hartington-Cross, and Brigadier Menzies are the three members guilty of the wartime summary execution and its subsequent cover-up.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "How did Edmund Clayre's legal background shape his approach to investigating Pemberton's death?",
+    "label": "good",
+    "notes": "Clayre was a solicitor known for discretion; the committee hired him for containment, but he pursued truth — described as a man who made institutions function without embarrassing themselves.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "What wartime atrocity was documented in Pemberton's memoir that the Coronation Club members wanted suppressed?",
+    "label": "good",
+    "notes": "A summary execution of seven French civilians in April 1945, ordered by officers who later became prominent men, carried out in defiance of standing orders and covered up with judicial cooperation.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "What was the name of the French village where the atrocity in Pemberton's memoir occurred?",
+    "label": "bad",
+    "notes": "No specific village is named; the event is described as occurring in occupied France in April 1945 without a location name.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "How did Detective Inspector Boyle use Clayre's evidence to prosecute Ashford-Colles after Pryce's arrest?",
+    "label": "bad",
+    "notes": "No prosecution of Ashford-Colles is depicted; Boyle is constrained by institutional protection of prominent members and the novel leaves this dimension unresolved.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "What specific section of the Official Secrets Act did Pemberton cite to protect his memoir from seizure?",
+    "label": "bad",
+    "notes": "No such citation appears in the novel; Pemberton was threatened by Ashford-Colles but invoked no statutory protection.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "Who was the War Office archivist who helped Clayre locate the classified court-martial transcripts?",
+    "label": "bad",
+    "notes": "No named War Office archivist assists Clayre; the transcripts appear in the documentary record assembled in the novel without this intermediary.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "How did the Coronation Club formally respond to the revelation of its members' wartime crimes?",
+    "label": "bad",
+    "notes": "No institutional response by the club is depicted; the novel ends with Pryce's situation and Clayre's moral reckoning, not with club governance.",
+    "file": "08-the-brass-key"
+  },
+  {
+    "prompt": "Who was Thomas Fell and what motivated him to kill Irena Vukić-Horvatinčić?",
+    "label": "good",
+    "notes": "Fell is the British literary biographer who discovered the Tomljanović plagiarism; he killed Irena in cold terror that her confession would destroy his own professional reputation.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "What was The Salt House and what was the truth about its authorship?",
+    "label": "good",
+    "notes": "The Salt House was Irena's celebrated novel, actually written by a Zagreb postal clerk named Branko Tomljanović, whose manuscript Irena stole and published under her own name in 1991.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "Who was Branko Tomljanović and what happened to him?",
+    "label": "good",
+    "notes": "Tomljanović was a young Zagreb postal clerk who wrote the manuscript in a rented room; he died in October 1987 of pneumonia complicated by malnutrition, unknown and unpublished.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "What announcement did Irena make at dinner that prompted the killer to act?",
+    "label": "good",
+    "notes": "Irena announced she had been writing a memoir-confession revealing the full truth about The Salt House; this created the crisis Fell needed to prevent.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "How did Dubravka Šarić discover the letter in Irena's study that broke the case open?",
+    "label": "good",
+    "notes": "Dubravka searched the study against the inspector's instructions and found a locked drawer containing Thomas Fell's letter and Irena's three-sentence reply.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "How did Thomas Fell obtain the original Tomljanović manuscript from the Ljubljana archive?",
+    "label": "bad",
+    "notes": "Fell found a reference to the manuscript; the manuscript itself was preserved in Ljubljana by bureaucratic accident. He did not physically obtain it from the archive.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "What literary award was posthumously rescinded from Irena Vukić-Horvatinčić after the truth about The Salt House emerged?",
+    "label": "bad",
+    "notes": "No award rescission is depicted; the novel ends with Thomas Fell's arrest and does not detail the posthumous literary reckoning.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "How did Luka Petrović's debut novel connect thematically to the Tomljanović manuscript?",
+    "label": "bad",
+    "notes": "No thematic connection between Luka's novel and Tomljanović's work is established; Luka functions as a witness surrogate, not as a parallel to the theft.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "What specific legal mechanism did Marta Vukić's lawyer use to contest the terms of Irena's estate will?",
+    "label": "bad",
+    "notes": "Marta's lawyer consulted on whether the plagiarism revelation would affect the estate's legal standing, but the specific mechanism is not named in the novel.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "What testimony did Ante Filipović ultimately provide to the Croatian court about the plagiarism?",
+    "label": "bad",
+    "notes": "No Croatian court proceeding is depicted in the novel; Ante makes a half-confession to the inspector about knowing of the manuscript, but gives no formal legal testimony.",
+    "file": "09-the-oleander-garden"
+  },
+  {
+    "prompt": "Who was Hendrik Maarssen and why did he kill both Willem and Liesbeth Drost?",
+    "label": "good",
+    "notes": "Maarssen was a senior law partner representing a consortium opposing the Bugis land claim; he killed both to suppress the Elzevir chart that would have supported the claim and exposed his misjudgment.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "What was the Elzevir chart and why was it significant to the Bugis land claim case?",
+    "label": "good",
+    "notes": "The Elzevir chart was a 1651 map made by VOC cartographer Maarten Elzevir working outside company authority, reflecting Bugis territorial understanding; it was the most direct pre-colonial evidence of indigenous land tenure.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "How did Inspector Benali and Rosa Drost-Vermeer each approach the investigation differently?",
+    "label": "good",
+    "notes": "Benali followed physical and pharmaceutical evidence while Rosa followed documentary and archival evidence; the novel argues that the solution required both approaches combined.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "Who was Sita Wulandari and what was her connection to the novel's central legal dispute?",
+    "label": "good",
+    "notes": "Sita was a legal advocate for the Bugis land claim whose grandmother's family was displaced from the disputed land; she provided Rosa with crucial context about the legal stakes of the Elzevir chart.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "What did Rosa discover in the Nationaal Archief in The Hague about the Elzevir chart's history?",
+    "label": "good",
+    "notes": "She found letters from VOC director Cornelis Hagen discussing the need to 'correct the documentary record' regarding territorial understandings in Sulawesi and to remove Elzevir's unauthorized chart from circulation.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "What was the name of the Dutch colonial governor who originally commissioned Maarten Elzevir's survey of Sulawesi?",
+    "label": "bad",
+    "notes": "Elzevir made the map outside his official mandate without a commission; no colonial governor commissioned it.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "How did the Indonesian government respond to the Bugis land claim after Maarssen's arrest?",
+    "label": "bad",
+    "notes": "The novel ends with Maarssen's arrest and Rosa completing her uncle's archival work; no Indonesian government response is depicted.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "What was the specific title of the admissibility challenge filed by Van Leeuwen & Maarssen in Indonesian court?",
+    "label": "bad",
+    "notes": "The challenge targets admissibility of documentary evidence from private Dutch collections; no specific title is given in the novel.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "How did Pieter Verhoeven eventually donate the Elzevir chart to a public institution after the investigation concluded?",
+    "label": "bad",
+    "notes": "No donation by Verhoeven is depicted; the novel ends before the legal and custodial fate of the map is determined.",
+    "file": "10-the-cartographers-widow"
+  },
+  {
+    "prompt": "What new evidence did Rosa find in Jakarta's national archives that corroborated the Elzevir chart?",
+    "label": "bad",
+    "notes": "Rosa does not travel to Jakarta; her archival work takes place at the Nationaal Archief in The Hague and at the University of Amsterdam.",
+    "file": "10-the-cartographers-widow"
+  }
+]

@@ -95,23 +95,19 @@ For MSSQL setup, create a read-only database user with SELECT and EXECUTE permis
 
 ## Quick Start
 
+### Core setup (all modes)
+
 ```bash
 # 1. Clone
 git clone <repo-url>
 cd mcp-authenticated-server
 
-# 2. Download the embedding model
-make download-model
-
-# 3. Start the embedding server (separate terminal, bare metal for GPU)
-make embed-server
-
-# 4. Configure
+# 2. Configure
 cp config.toml.example config.toml
 chmod 600 config.toml
 
 # If you have an aws-cognito JSON config file, import auth values automatically:
-./scripts/configure-auth.sh cognito/config.json config.toml
+./scripts/configure-auth.sh path/to/cognito.json config.toml
 
 # Or edit config.toml manually -- set [auth] region, user_pool_id, client_id
 # from your Cognito User Pool. See docs/aws-cognito-setup.md for details.
@@ -120,22 +116,39 @@ chmod 600 config.toml
 # Use the database you created in the "Database Setup" section above:
 echo 'export DATABASE_URL=postgres://your_username:your_password@localhost:5432/mcp_server?sslmode=disable' >> .envrc
 chmod 600 .envrc
+source .envrc
 
-# 5. Apply schema
+# 3. Apply schema
 make schema
 
-# 6. Ingest documents
-make ingest DIR=./data
-
-# 7. Run the MCP server
+# 4. Run the MCP server
 make run
+```
+
+At this point the server is running with the `query_data` tool, which lets MCP clients execute read-only SQL against your database. This is sufficient if your goal is database access without vector search.
+
+### Vector search setup (optional)
+
+If you want semantic search (`search_documents`) and document ingestion (`ingest_documents`), you also need an embedding server and ingested documents:
+
+```bash
+# 5. Download the embedding model
+make download-model
+
+# 6. Start the embedding server (separate terminal, bare metal for GPU)
+make embed-server
+
+# 7. Ingest documents
+make ingest DIR=./data
 
 # 8. Run evaluations (optional, requires ANTHROPIC_API_KEY for the LLM judge)
 export ANTHROPIC_API_KEY="sk-ant-..."
 make eval EVAL_FILE=data/evals/evals.json
 ```
 
-The embedding server (`make embed-server`) runs as a long-lived process in a separate terminal. It must be running before ingestion or search will work. Any OpenAI-compatible `/v1/embeddings` endpoint works as an alternative (vLLM, TEI, OpenAI API, etc.) -- just set `embed.host` in `config.toml`.
+Set `embed.enabled = true` in config.toml (the default) to register the vector tools. Set `embed.enabled = false` to disable them entirely, in which case only `query_data` is available and no embedding server is needed.
+
+The embedding server (`make embed-server`) runs as a long-lived process in a separate terminal. Any OpenAI-compatible `/v1/embeddings` endpoint works as an alternative (vLLM, TEI, OpenAI API, etc.) -- just set `embed.host` in `config.toml`.
 
 ## Build
 

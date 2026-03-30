@@ -39,10 +39,13 @@ if [[ ! -f "${CONFIG_TOML}" ]]; then
 fi
 
 # Extract values from JSON. Uses grep+sed to avoid requiring jq as a dependency.
+# Strips trailing whitespace, carriage returns, and commas.
 extract_json_string() {
     local key="$1"
     local file="$2"
-    grep "\"${key}\"" "${file}" | sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/'
+    grep "\"${key}\"" "${file}" \
+        | sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' \
+        | tr -d '\r\n '
 }
 
 REGION=$(extract_json_string "region" "${COGNITO_JSON}")

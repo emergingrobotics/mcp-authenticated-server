@@ -1,3 +1,7 @@
+# Local development stack: MCP server + PostgreSQL.
+# The embedding server (e.g., llama-server) must be run separately.
+# See README.md for embedding server setup instructions.
+
 services:
   server:
     build:

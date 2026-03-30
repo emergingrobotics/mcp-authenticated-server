@@ -67,18 +67,9 @@ type EmbedConfig struct {
 	Enabled       bool              `toml:"enabled"`
 	Host          string            `toml:"host"`
 	Model         string            `toml:"model"`
-	Dimension     int               `toml:"dimension"`
-	QueryPrefix   string            `toml:"query_prefix"`
-	PassagePrefix string            `toml:"passage_prefix"`
-	Server        EmbedServerConfig `toml:"server"`
-}
-
-type EmbedServerConfig struct {
-	Bundled    bool     `toml:"bundled"`
-	ModelPath  string   `toml:"model_path"`
-	Port       int      `toml:"port"`
-	GPULayers  int      `toml:"gpu_layers"`
-	ExtraFlags []string `toml:"extra_flags"`
+	Dimension     int    `toml:"dimension"`
+	QueryPrefix   string `toml:"query_prefix"`
+	PassagePrefix string `toml:"passage_prefix"`
 }
 
 type SearchConfig struct {
@@ -176,9 +167,6 @@ func (c *Config) setDefaults() error {
 	}
 	if c.Embed.Dimension == 0 {
 		c.Embed.Dimension = 768
-	}
-	if c.Embed.Server.Port == 0 {
-		c.Embed.Server.Port = 8079
 	}
 	if c.Search.Probes == 0 {
 		c.Search.Probes = 4
@@ -334,9 +322,9 @@ func (c *Config) Validate() error {
 
 	// URL scheme validation for outbound endpoints
 	// URL validation with SSRF mitigation (SEC-06)
-	// embed.host allows loopback when bundled=true (bundled llama-server on 127.0.0.1)
+	// embed.host allows localhost since the embedding server often runs on the same host
 	if c.Embed.Enabled && c.Embed.Host != "" {
-		if err := validateURLScheme(c.Embed.Host, "embed.host", c.Embed.Server.Bundled); err != nil {
+		if err := validateURLScheme(c.Embed.Host, "embed.host", true); err != nil {
 			return err
 		}
 	}
@@ -348,13 +336,6 @@ func (c *Config) Validate() error {
 	if c.Hyde.BaseURL != "" {
 		if err := validateURLScheme(c.Hyde.BaseURL, "hyde.base_url", false); err != nil {
 			return err
-		}
-	}
-
-	// Validate embed.server.extra_flags - reject log file path flags
-	for _, flag := range c.Embed.Server.ExtraFlags {
-		if strings.HasPrefix(flag, "--log-file") || strings.HasPrefix(flag, "--logfile") {
-			return fmt.Errorf("embed.server.extra_flags: --log-file flags are not allowed")
 		}
 	}
 

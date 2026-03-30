@@ -14,7 +14,7 @@ Provides authentication, database access, vector search, SQL querying, guardrail
 - **Two-level guardrails** — topic relevance gating and match score filtering
 - **HyDE query expansion** — optional hypothetical document embeddings via Claude API
 - **Cross-encoder reranking** — optional reranking via HTTP endpoint
-- **Container-first** — Podman-preferred, Docker-compatible with bundled embedding server
+- **Container-first** — Podman-preferred, Docker-compatible deployment
 - **Evaluation framework** — LLM-as-judge RAG quality measurement
 
 ## Architecture
@@ -35,36 +35,70 @@ MCP Clients (Claude, agents, etc.)
 |                   KNN+FTS -> RRF -> Rerank -> Filter   |
 |  Database Abstraction (PostgreSQL OR MSSQL)            |
 +-------------------------------------------------------+
+        |                          |
+        v                          v
+   PostgreSQL + pgvector     External Embed Server
+   (or MS SQL Server)        (e.g., llama-server)
 ```
+
+## Embedding Server (External)
+
+The embedding server is **not bundled** with the MCP server. Embedding inference requires bare-metal GPU access for acceptable performance; running it inside a container without GPU passthrough would be impractically slow.
+
+### Recommended Setup: llama-server
+
+1. Download a GGUF embedding model:
+   ```bash
+   make download-model
+   # Or manually: huggingface-cli download nomic-ai/nomic-embed-text-v1.5-GGUF nomic-embed-text-v1.5.Q8_0.gguf --local-dir models/
+   ```
+
+2. Start llama-server on the host (with GPU):
+   ```bash
+   llama-server \
+     --model models/nomic-embed-text-v1.5.Q8_0.gguf \
+     --embedding \
+     --port 8079 \
+     --host 0.0.0.0 \
+     --n-gpu-layers -1
+   ```
+
+3. Set `embed.host` in `config.toml`:
+   ```toml
+   [embed]
+   enabled = true
+   host = "http://localhost:8079"
+   model = "nomic-embed-text"
+   ```
+
+Any OpenAI-compatible `/v1/embeddings` endpoint works (vLLM, TEI, OpenAI API, etc.).
 
 ## Quick Start
 
 ```bash
 # 1. Clone
-git clone --recurse-submodules <repo-url>
+git clone <repo-url>
 cd mcp-authenticated-server
 
-# 2. Install prerequisites
-make prereqs
-
-# 3. Download embedding model
+# 2. Start an embedding server (see above)
 make download-model
+llama-server -m models/nomic-embed-text-v1.5.Q8_0.gguf --embedding --port 8079
 
-# 4. Configure
+# 3. Configure
 cp config.toml.example config.toml
 chmod 600 config.toml
-# Edit config.toml with your Cognito + database settings
+# Edit config.toml: set embed.host, [auth], DATABASE_URL env var
 
-# 5. Start local infrastructure
-make container-up
+# 4. Start local infrastructure
+make container-up  # PostgreSQL + MCP server
 
-# 6. Apply schema
+# 5. Apply schema
 make schema
 
-# 7. Ingest documents
+# 6. Ingest documents
 make ingest DIR=./data
 
-# 8. Run evaluations
+# 7. Run evaluations
 make eval
 ```
 
@@ -140,6 +174,7 @@ Fork authors touch at most 3 files. See [REQUIREMENTS.md section 7](REQUIREMENTS
 - Secrets come from environment variables only
 - File reads validate paths against allowed directories
 - JWT tokens are never logged
+- Embedding server runs externally, not inside the MCP server container
 
 ## Container Engine
 

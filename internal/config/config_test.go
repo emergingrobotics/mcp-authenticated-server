@@ -46,12 +46,6 @@ host = "http://127.0.0.1:8079"
 model = "nomic-embed-text"
 dimension = 768
 
-[embed.server]
-bundled = true
-model_path = "/models/model.gguf"
-port = 8079
-gpu_layers = -1
-
 [search]
 probes = 4
 retrieval_pool_size = 20

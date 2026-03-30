@@ -51,8 +51,10 @@ ingest_documents = ["admin"]
 [embed]
 # Set to false to disable vector features entirely
 enabled = true
-# OpenAI-compatible embeddings API endpoint
-host = "http://127.0.0.1:8079"
+# OpenAI-compatible embeddings API endpoint (external server)
+# The embedding server must be run separately -- see README.md for setup.
+# Bare metal with GPU recommended for acceptable performance.
+host = "http://localhost:8079"
 # Model name sent in /v1/embeddings request body
 model = "nomic-embed-text"
 # Embedding vector dimension
@@ -61,18 +63,6 @@ dimension = 768
 query_prefix = ""
 # Prefix prepended to passages before embedding
 passage_prefix = ""
-
-[embed.server]
-# true = start llama-server inside the container
-bundled = true
-# Path to the GGUF model file
-model_path = "/models/nomic-embed-text-v1.5.Q8_0.gguf"
-# Internal listen port (127.0.0.1 only)
-port = 8079
-# GPU layers: -1 = all GPU; 0 = CPU only
-gpu_layers = -1
-# Additional llama-server CLI flags (validated at startup)
-extra_flags = []
 
 [search]
 # IVFFlat probes per KNN query

@@ -71,8 +71,13 @@ if [[ -z "${DOMAIN}" ]]; then
 fi
 
 # User extraction: aws-cognito JSON stores users in a "users" array.
-# Extract the first user's email for COGNITO_USERNAME.
+# Extract the first user's email and password.
 USERNAME=$(extract_json_string "email" "${COGNITO_JSON}")
+PASSWORD=$(extract_json_string "permanent_password" "${COGNITO_JSON}")
+# Don't use the password if it's the literal string "None" (failed user creation)
+if [[ "${PASSWORD}" == "None" ]]; then
+    PASSWORD=""
+fi
 
 if [[ -z "${REGION}" ]]; then
     echo "Error: 'region' not found in ${COGNITO_JSON}" >&2
@@ -130,13 +135,16 @@ fi
     if [[ -n "${USERNAME}" ]]; then
         echo "export COGNITO_USERNAME=\"${USERNAME}\""
     fi
+    if [[ -n "${PASSWORD}" ]]; then
+        echo "export COGNITO_PASSWORD=\"${PASSWORD}\""
+    fi
 } >> "${ENVRC}"
 chmod 600 "${ENVRC}"
 
 echo ""
 echo "Updated ${ENVRC} with COGNITO_ environment variables."
 
-# Check if COGNITO_PASSWORD is already set; if not, warn the user.
+# Check if COGNITO_PASSWORD is set; if not, warn the user.
 if ! grep -q '^export COGNITO_PASSWORD=' "${ENVRC}" 2>/dev/null; then
     echo ""
     echo "NOTE: COGNITO_PASSWORD is not set in ${ENVRC}."

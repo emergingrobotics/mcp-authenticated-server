@@ -42,12 +42,18 @@ if [[ ! -f "${CONFIG_TOML}" ]]; then
 fi
 
 # Extract a string value from JSON by key.
-# Uses grep+sed, strips whitespace/CR. No jq dependency.
+# Only matches "key": "string-value" patterns (not "key": { or "key": [).
+# Uses grep+sed, strips CR. No jq dependency.
 extract_json_string() {
     local key="$1"
     local file="$2"
     local value
-    value=$(grep "\"${key}\"" "${file}" | head -1 | sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | tr -d '\r')
+    # grep for the key, filter to lines with a quoted string value, extract it
+    value=$(grep "\"${key}\"[[:space:]]*:" "${file}" \
+        | grep "\"${key}\"[[:space:]]*:[[:space:]]*\"" \
+        | head -1 \
+        | sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' \
+        | tr -d '\r')
     echo -n "${value}"
 }
 
@@ -55,7 +61,15 @@ REGION=$(extract_json_string "region" "${COGNITO_JSON}")
 USER_POOL_ID=$(extract_json_string "user_pool_id" "${COGNITO_JSON}")
 CLIENT_ID=$(extract_json_string "client_id" "${COGNITO_JSON}")
 CLIENT_SECRET=$(extract_json_string "client_secret" "${COGNITO_JSON}")
-DOMAIN=$(extract_json_string "domain" "${COGNITO_JSON}")
+
+# Domain extraction: aws-cognito JSON may store the domain as a nested object
+# with "cognito_domain_prefix", or as a simple "domain": "prefix" string.
+# Try cognito_domain_prefix first, then fall back to a simple domain string.
+DOMAIN=$(extract_json_string "cognito_domain_prefix" "${COGNITO_JSON}")
+if [[ -z "${DOMAIN}" ]]; then
+    # Fall back to simple "domain" — only matches "domain": "string", not "domain": {
+    DOMAIN=$(extract_json_string "domain" "${COGNITO_JSON}")
+fi
 
 if [[ -z "${REGION}" ]]; then
     echo "Error: 'region' not found in ${COGNITO_JSON}" >&2

@@ -1,0 +1,23 @@
+# Secrets and config
+.env
+.envrc
+config.toml
+
+# Build artifacts
+bin/
+*.exe
+
+# Editor backups
+*~
+
+# Go
+vendor/
+
+# Models (large binary files)
+models/*.gguf
+
+# OS
+.DS_Store
+
+# LLM working files
+.llm/

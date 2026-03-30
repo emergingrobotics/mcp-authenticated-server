@@ -130,7 +130,8 @@ make ingest DIR=./data
 # 7. Run the MCP server
 make run
 
-# 9. Run evaluations (optional)
+# 8. Run evaluations (optional, requires ANTHROPIC_API_KEY for the LLM judge)
+export ANTHROPIC_API_KEY="sk-ant-..."
 make eval
 ```
 

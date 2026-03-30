@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,6 +12,10 @@ import (
 
 	"github.com/emergingrobotics/mcp-authenticated-server/internal/vecmath"
 )
+
+// ErrUnavailable indicates the embedding server cannot be reached (connection refused, DNS failure, timeout).
+// Distinct from a server-side error (HTTP 500), which means the server is reachable but rejected the request.
+var ErrUnavailable = errors.New("embedding server unavailable")
 
 const (
 	maxResponseBody = 4 << 20 // 4 MiB (SEC-04)
@@ -79,7 +84,8 @@ func (c *Client) EmbedWithPrefix(ctx context.Context, texts []string, prefix str
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("embed request failed: %w", err)
+		// Connection-level failure: server unreachable (ERR-16: halt ingest)
+		return nil, fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
 
@@ -89,6 +95,8 @@ func (c *Client) EmbedWithPrefix(ctx context.Context, texts []string, prefix str
 	}
 
 	if resp.StatusCode != http.StatusOK {
+		// Server returned an error (e.g., input too large) -- this is a per-request
+		// failure, not a connectivity issue. Callers should skip the file, not halt.
 		return nil, fmt.Errorf("embed server returned status %d: %s", resp.StatusCode, string(respBody))
 	}
 

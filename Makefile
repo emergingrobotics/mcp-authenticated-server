@@ -83,6 +83,7 @@ EMBED_MODEL ?= models/nomic-embed-text-v1.5.Q8_0.gguf
 EMBED_PORT  ?= 8079
 EMBED_HOST  ?= 127.0.0.1
 EMBED_GPU   ?= -1
+EMBED_BATCH ?= 2048
 
 download-model:
 	./scripts/download-model.sh $(MODEL_REPO) $(MODEL_FILE)
@@ -95,7 +96,9 @@ embed-server:
 		--embedding \
 		--port $(EMBED_PORT) \
 		--host $(EMBED_HOST) \
-		--n-gpu-layers $(EMBED_GPU)
+		--n-gpu-layers $(EMBED_GPU) \
+		--batch-size $(EMBED_BATCH) \
+		--ubatch-size $(EMBED_BATCH)
 
 prereqs:
 	@echo "Install a container engine (podman preferred):"

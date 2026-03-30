@@ -13,9 +13,6 @@ import (
 	"github.com/emergingrobotics/mcp-authenticated-server/internal/vectorstore"
 )
 
-// errEmbedUnreachable signals that the embedding server is unreachable (ERR-16: halt immediately).
-var errEmbedUnreachable = errors.New("embedding server unreachable")
-
 // IngestResult holds the results of an ingestion run.
 type IngestResult struct {
 	DocumentsProcessed int     `json:"documents_processed"`
@@ -90,13 +87,13 @@ func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension 
 
 	for _, entry := range entries {
 		if err := p.processFile(ctx, entry, result); err != nil {
-			// ERR-16: embed server unreachable -> halt immediately
-			if errors.Is(err, errEmbedUnreachable) {
+			// ERR-16: embed server unreachable (connection refused, DNS, timeout) -> halt immediately
+			if errors.Is(err, embed.ErrUnavailable) {
 				slog.Error("embed server unreachable, halting ingest", "error", err)
 				result.DurationSeconds = time.Since(start).Seconds()
 				return result, err
 			}
-			// ERR-15: per-file error -> warn, skip, continue
+			// ERR-15: per-file error (including embed 500s) -> warn, skip, continue
 			slog.Warn("per-file error, skipping", "path", entry.Path, "error", err)
 			result.Errors++
 		}
@@ -197,7 +194,7 @@ func (p *Pipeline) processFile(ctx context.Context, entry FileEntry, result *Ing
 
 		embeddings, err := p.embedder.Embed(ctx, texts)
 		if err != nil {
-			return fmt.Errorf("%w: %v", errEmbedUnreachable, err)
+			return fmt.Errorf("embedding batch: %w", err)
 		}
 
 		// Convert to vectorstore chunks

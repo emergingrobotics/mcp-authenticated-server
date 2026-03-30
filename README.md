@@ -45,11 +45,11 @@ MCP Clients (Claude, agents, etc.)
 
 Before running the MCP server you need:
 
-1. **llama-server** (or any OpenAI-compatible embedding endpoint) installed and in your PATH. See [docs/installing-llama-server.md](docs/installing-llama-server.md) for full installation instructions.
+1. **llama-server** (or any OpenAI-compatible embedding endpoint) installed and in your PATH. Embedding inference requires bare-metal GPU access for acceptable performance. See [docs/installing-llama-server.md](docs/installing-llama-server.md) for installation instructions.
 
 2. **PostgreSQL 14+** with the [pgvector](https://github.com/pgvector/pgvector) extension (for vector mode), or **MS SQL Server 2019+** (SQL-only mode). The `make container-up` command starts PostgreSQL automatically via compose.
 
-3. **AWS Cognito User Pool** provisioned with an App Client. See [cognito/config.json.example](cognito/config.json.example).
+3. **AWS Cognito User Pool** provisioned with an App Client. The server validates all requests against Cognito-issued JWTs. See [docs/aws-cognito-setup.md](docs/aws-cognito-setup.md) for setup instructions, or the [emergingrobotics/aws-cognito](https://github.com/emergingrobotics/aws-cognito) CLI tool for automated provisioning.
 
 4. **Go 1.23+** for building from source.
 

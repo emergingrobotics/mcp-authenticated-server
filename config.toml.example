@@ -10,7 +10,7 @@ engine = "podman"
 
 [server]
 # HTTP listen port
-port = "8080"
+port = "9090"
 # Log level: debug | info | warn | error
 log_level = "info"
 # Optional: path to TLS certificate (set both or neither)

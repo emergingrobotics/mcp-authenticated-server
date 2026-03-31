@@ -13,7 +13,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EVAL_FILE="${1:-}"
-SERVER_URL="${MCP_SERVER_URL:-http://localhost:8080}"
+CONFIG="${SCRIPT_DIR}/../config.toml"
+DEFAULT_PORT=$(grep -E '^\s*port\s*=' "${CONFIG}" 2>/dev/null | head -1 | sed 's/.*=\s*"\?\([^"]*\)"\?/\1/' || echo "9090")
+SERVER_URL="${MCP_SERVER_URL:-http://localhost:${DEFAULT_PORT}}"
 EVAL_MODEL="${EVAL_MODEL:-claude-sonnet-4-20250514}"
 EVAL_LIMIT="${EVAL_LIMIT:-0}"
 

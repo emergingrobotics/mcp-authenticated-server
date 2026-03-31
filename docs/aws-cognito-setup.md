@@ -165,7 +165,7 @@ Credentials are read from environment variables only -- never passed as CLI argu
 
 ```bash
 TOKEN=$(./scripts/get-token.sh --flow user_password)
-curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/mcp ...
+curl -H "Authorization: Bearer $TOKEN" http://localhost:9090/mcp ...
 ```
 
 ## JWT claims used by the server

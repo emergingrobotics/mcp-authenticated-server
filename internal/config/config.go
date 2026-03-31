@@ -145,7 +145,7 @@ func Load(path string) (*Config, error) {
 
 func (c *Config) setDefaults() error {
 	if c.Server.Port == "" {
-		c.Server.Port = "8080"
+		c.Server.Port = "9090"
 	}
 	if c.Server.LogLevel == "" {
 		c.Server.LogLevel = "info"

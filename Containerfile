@@ -1,5 +1,5 @@
 # Stage 1: Build the Go binary
-FROM golang:1.23 AS builder
+FROM golang:1.25 AS builder
 
 WORKDIR /src
 COPY go.mod go.sum ./
@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 # NOTE: The embedding server (e.g., llama-server) is NOT included in this image.
 # It must be run as a separate external process with bare-metal GPU access.
 # See README.md for setup instructions.
-FROM debian:bookworm-slim@sha256:ca3372ce30b03a591ec573ea975ad8b0ecaf0eb17a354416741f8001bbcae233
+FROM docker.io/library/debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl && \
@@ -33,6 +33,6 @@ RUN chown -R appuser:appuser /app
 
 USER appuser
 
-EXPOSE 8080
+EXPOSE 9090
 
 ENTRYPOINT ["/app/entrypoint.sh"]

@@ -157,17 +157,57 @@ func (s *PostgresStore) GetChunkCount(ctx context.Context) (int, error) {
 }
 
 func (s *PostgresStore) DropAndRecreateTables(ctx context.Context, dimension int) error {
-	statements := []string{
+	dropStatements := []string{
 		`DROP TABLE IF EXISTS chunks CASCADE`,
 		`DROP TABLE IF EXISTS documents CASCADE`,
 		`DROP TABLE IF EXISTS build_metadata CASCADE`,
 	}
-	for _, stmt := range statements {
+	for _, stmt := range dropStatements {
 		if _, err := s.db.ExecContext(ctx, stmt); err != nil {
 			return fmt.Errorf("drop tables: %w", err)
 		}
 	}
-	// Re-apply schema handled by caller via database.Store.ApplySchema
+
+	createStatements := []string{
+		`CREATE EXTENSION IF NOT EXISTS vector`,
+
+		`CREATE TABLE IF NOT EXISTS documents (
+			id BIGSERIAL PRIMARY KEY,
+			source_path TEXT UNIQUE NOT NULL,
+			title TEXT,
+			content TEXT NOT NULL,
+			content_hash TEXT NOT NULL,
+			token_count INTEGER,
+			created_at TIMESTAMPTZ DEFAULT NOW()
+		)`,
+
+		fmt.Sprintf(`CREATE TABLE IF NOT EXISTS chunks (
+			id BIGSERIAL PRIMARY KEY,
+			document_id BIGINT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+			chunk_index INTEGER NOT NULL,
+			content TEXT NOT NULL,
+			token_count INTEGER,
+			heading_context TEXT,
+			chunk_type TEXT,
+			embedding vector(%d),
+			content_fts tsvector GENERATED ALWAYS AS (to_tsvector('english', content)) STORED,
+			created_at TIMESTAMPTZ DEFAULT NOW(),
+			UNIQUE(document_id, chunk_index)
+		)`, dimension),
+
+		`CREATE INDEX IF NOT EXISTS idx_chunks_content_fts ON chunks USING GIN (content_fts)`,
+
+		`CREATE TABLE IF NOT EXISTS build_metadata (
+			key TEXT PRIMARY KEY,
+			value TEXT NOT NULL
+		)`,
+	}
+	for _, stmt := range createStatements {
+		if _, err := s.db.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("recreate tables: %w", err)
+		}
+	}
+
 	return nil
 }
 

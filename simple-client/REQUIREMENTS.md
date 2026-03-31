@@ -35,7 +35,7 @@ The client consists of:
 ```toml
 [server]
 # MCP server base URL (proxied through Caddy)
-mcp_url = "http://localhost:8080"
+mcp_url = "http://localhost:9090"
 # MCP tool name to call for search
 tool_name = "search_documents"
 # Maximum number of results to request per search

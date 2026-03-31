@@ -367,7 +367,7 @@ The embedding server (e.g., llama-server from llama.cpp, or any OpenAI-compatibl
 | EVAL-04 | **Summary statistics**: The script MUST report: total pass rate, per-label pass rate (good vs. bad), and the indices of failed evals for debugging. |
 | EVAL-05 | **Stability testing**: A `scripts/eval-stability.sh` script MUST run the eval suite N times (configurable, default 25) and report: min/max/average pass rates and most frequently failing eval indices with failure percentages. |
 | EVAL-06 | The eval script MUST authenticate against the MCP server using the configured Cognito credentials, obtaining a JWT via `scripts/get-token.sh`. |
-| EVAL-07 | Environment variables for evals: `ANTHROPIC_API_KEY` (required for judge), `MCP_SERVER_URL` (default `http://localhost:8080`), `EVAL_LIMIT` (max evals to run), `EVAL_MODEL` (judge model override). |
+| EVAL-07 | Environment variables for evals: `ANTHROPIC_API_KEY` (required for judge), `MCP_SERVER_URL` (default `http://localhost:9090`), `EVAL_LIMIT` (max evals to run), `EVAL_MODEL` (judge model override). |
 | EVAL-08 | A `data/evals/evals.json.example` MUST be committed with 3-5 example eval entries demonstrating both `"good"` and `"bad"` labels. |
 | EVAL-09 | Makefile target `eval` MUST run the eval suite. Target `eval-stability` MUST run stability testing. |
 
@@ -392,7 +392,7 @@ The embedding server (e.g., llama-server from llama.cpp, or any OpenAI-compatibl
 engine = "podman"                  # "podman" or "docker" (auto-detect if empty)
 
 [server]
-port = "8080"                      # HTTP listen port
+port = "9090"                      # HTTP listen port
 log_level = "info"                 # debug | info | warn | error
 tls_cert = ""                      # optional: path to TLS certificate (both or neither)
 tls_key = ""                       # optional: path to TLS private key (both or neither)

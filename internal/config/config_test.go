@@ -21,7 +21,7 @@ const validConfig = `
 engine = "podman"
 
 [server]
-port = "8080"
+port = "9090"
 log_level = "info"
 
 [database]

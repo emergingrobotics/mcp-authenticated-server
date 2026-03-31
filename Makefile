@@ -1,5 +1,5 @@
 .PHONY: help build test test-integration test-coverage lint govulncheck run \
-       container-build up down container-logs \
+       container-build container-up container-down container-logs \
        ingest ingest-add schema validate eval eval-stability download-model embed-server prereqs clean
 
 # Auto-detect container engine: prefer podman, fall back to docker.
@@ -17,8 +17,8 @@ help:
 	@echo "  govulncheck      Run govulncheck for known vulnerabilities"
 	@echo "  run              Run the server (serve subcommand)"
 	@echo "  container-build  Build container image"
-	@echo "  up               Start containers via compose"
-	@echo "  down             Stop containers via compose"
+	@echo "  container-up     Start containers via compose"
+	@echo "  container-down   Stop containers via compose"
 	@echo "  container-logs   Tail container logs"
 	@echo "  ingest           Ingest documents with drop (DIR=path, or uses config default)"
 	@echo "  ingest-add       Ingest documents with upsert, no drop (DIR=path, or uses config default)"

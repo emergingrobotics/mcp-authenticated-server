@@ -21,24 +21,116 @@ Provides authentication, database access, vector search, SQL querying, guardrail
 
 See [docs/DESIGN.md](docs/DESIGN.md) for the full architecture, package dependency DAG, data model, and extension points.
 
+```mermaid
+graph TB
+    Clients["MCP Clients<br/>(Claude, agents, etc.)"]
+
+    subgraph Server["mcp-server (Go binary)"]
+        Auth["Auth Middleware<br/>(Cognito JWT)"]
+        MCP["MCP Handler<br/>(Streamable HTTP)"]
+        Tools["Tool Registry"]
+        SearchTool["search_documents"]
+        QueryTool["query_data"]
+        IngestTool["ingest_documents"]
+        ForkTools["(fork-added tools)"]
+
+        subgraph Pipeline["Search Pipeline"]
+            HyDE["HyDE<br/>Query Expansion"]
+            Embed["Embed Client<br/>(/v1/embeddings)"]
+            Guard["Guardrails<br/>L1: Topic Gate<br/>L2: Score Gate"]
+            KNN["KNN Vector Search"]
+            FTS["Full-Text Search"]
+            RRF["RRF Merge"]
+            Rerank["Reranker<br/>(optional)"]
+        end
+
+        DAL["Database Abstraction Layer"]
+    end
+
+    Cognito["AWS Cognito<br/>(JWKS)"]
+    Anthropic["Anthropic API<br/>(Claude)"]
+    EmbedServer["Embed Server<br/>(llama-server)"]
+    RerankerServer["Reranker Server<br/>(cross-encoder)"]
+    PG["PostgreSQL<br/>+ pgvector"]
+    MSSQL["MS SQL Server"]
+
+    Clients -- "HTTPS / JSON-RPC<br/>(POST /mcp)" --> Auth
+    Auth --> MCP
+    Auth -. "validate JWT" .-> Cognito
+    MCP --> Tools
+    Tools --> SearchTool
+    Tools --> QueryTool
+    Tools --> IngestTool
+    Tools --> ForkTools
+
+    SearchTool --> HyDE
+    HyDE -. "generate hypothesis" .-> Anthropic
+    HyDE --> Embed
+    Embed -. "/v1/embeddings" .-> EmbedServer
+    Embed --> Guard
+    Guard --> KNN
+    Guard --> FTS
+    KNN --> RRF
+    FTS --> RRF
+    RRF --> Rerank
+    Rerank -. "/rerank" .-> RerankerServer
+
+    DAL --> PG
+    DAL --> MSSQL
+    KNN --> DAL
+    FTS --> DAL
+    QueryTool --> DAL
+    IngestTool --> DAL
 ```
-MCP Clients (Claude, agents, etc.)
-        |
-        | HTTPS / JSON-RPC (POST /mcp)
-        v
-+-------------------------------------------------------+
-|                 mcp-server (Go binary)                 |
-|  Auth Middleware (Cognito JWT) --> MCP Handler          |
-|  Tool Registry: search_documents, query_data,          |
-|                 ingest_documents, (fork-added tools)   |
-|  Search Pipeline: HyDE -> Embed -> Guardrails ->       |
-|                   KNN+FTS -> RRF -> Rerank -> Filter   |
-|  Database Abstraction (PostgreSQL OR MSSQL)            |
-+-------------------------------------------------------+
-        |                          |
-        v                          v
-   PostgreSQL + pgvector     External Embed Server
-   (or MS SQL Server)        (e.g., llama-server)
+
+### Request Sequence
+
+A typical `search_documents` call showing the MCP protocol handshake and search pipeline:
+
+```mermaid
+sequenceDiagram
+    participant C as MCP Client
+    participant S as mcp-server
+    participant Co as AWS Cognito
+    participant A as Anthropic API
+    participant E as Embed Server
+    participant DB as PostgreSQL
+    participant R as Reranker
+
+    Note over C,S: Session Initialization
+    C->>S: POST /mcp (initialize)
+    S->>C: capabilities + Mcp-Session-Id
+    C->>S: POST /mcp (notifications/initialized)
+
+    Note over C,S: Tool Call
+    C->>S: POST /mcp (tools/call: search_documents)
+    S->>Co: Validate JWT (cached JWKS)
+    Co-->>S: Token valid
+
+    Note over S: Search Pipeline
+    S->>A: HyDE: generate hypothesis (optional)
+    A-->>S: Hypothetical passage
+    S->>E: POST /v1/embeddings
+    E-->>S: Query embedding vector
+
+    Note over S: L1 Guardrail: topic relevance check
+
+    par Parallel Retrieval
+        S->>DB: KNN vector search (pgvector)
+        DB-->>S: KNN results
+    and
+        S->>DB: Full-text search (tsvector)
+        DB-->>S: FTS results
+    end
+
+    Note over S: RRF merge
+
+    S->>R: POST /rerank (optional)
+    R-->>S: Reranked scores
+
+    Note over S: L2 Guardrail: score threshold check
+
+    S->>C: Search results (JSON-RPC response)
 ```
 
 ## Prerequisites

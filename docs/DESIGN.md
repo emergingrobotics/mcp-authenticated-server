@@ -8,59 +8,94 @@ Fork authors add domain logic (new tools, tables, eval entries) without touching
 
 ## Architecture
 
-```
-MCP Clients (Claude, agents, etc.)
-        |
-        | HTTPS / JSON-RPC (POST /mcp)
-        v
-+-------------------------------------------------------+
-|                 mcp-server (Go binary)                 |
-|                                                        |
-|  Auth Middleware (Cognito JWT) --> MCP Handler          |
-|       |                              |                 |
-|  Per-tool Authorizer          Tool Registry            |
-|                          - search_documents (vector)   |
-|                          - query_data (SQL)            |
-|                          - ingest_documents            |
-|                          - (fork-added tools)          |
-|                                                        |
-|  Guardrails        Search Pipeline      Embed Client   |
-|  L1: topic gate    (KNN + FTS + RRF)    (/v1/embed)   |
-|  L2: score gate                                        |
-|                                                        |
-|  HyDE Generator    SQL Store            Reranker       |
-|  (query expand)    (read-only exec)     (optional)     |
-|                                                        |
-|  Database Abstraction Layer                             |
-|  (PostgreSQL + pgvector  OR  MS SQL Server)            |
-+-------------------------------------------------------+
+```mermaid
+graph TB
+    Clients["MCP Clients<br/>(Claude, agents, etc.)"]
+
+    subgraph Server["mcp-server (Go binary)"]
+        Auth["Auth Middleware<br/>(Cognito JWT)"]
+        Authz["Per-tool Authorizer"]
+        MCP["MCP Handler"]
+        Tools["Tool Registry"]
+        Search["search_documents<br/>(vector)"]
+        Query["query_data<br/>(SQL)"]
+        Ingest["ingest_documents"]
+        Fork["(fork-added tools)"]
+
+        Guard["Guardrails<br/>L1: topic gate<br/>L2: score gate"]
+        Pipeline["Search Pipeline<br/>(KNN + FTS + RRF)"]
+        EmbedClient["Embed Client<br/>(/v1/embeddings)"]
+        HyDE["HyDE Generator<br/>(query expand)"]
+        SQLStore["SQL Store<br/>(read-only exec)"]
+        Reranker["Reranker<br/>(optional)"]
+
+        DAL["Database Abstraction Layer<br/>(PostgreSQL + pgvector OR MS SQL Server)"]
+    end
+
+    Clients -- "HTTPS / JSON-RPC<br/>(POST /mcp)" --> Auth
+    Auth --> MCP
+    Auth --> Authz
+    MCP --> Tools
+    Tools --> Search
+    Tools --> Query
+    Tools --> Ingest
+    Tools --> Fork
+    Search --> Guard
+    Search --> Pipeline
+    Search --> EmbedClient
+    Search --> HyDE
+    Query --> SQLStore
+    Pipeline --> DAL
+    SQLStore --> DAL
+    Ingest --> DAL
 ```
 
 ## Package Dependency DAG
 
 All imports flow downward. No circular imports.
 
-```
-cmd/server
-  +-- internal/server
-        +-- internal/tools
-        |     +-- internal/search (pipeline, RRF)
-        |     |     +-- internal/vectorstore
-        |     |     +-- internal/guardrails
-        |     |     +-- internal/hyde
-        |     |     +-- internal/rerank
-        |     |     +-- internal/embed
-        |     +-- internal/querystore
-        |     +-- internal/ingest
-        |           +-- internal/embed
-        |           +-- internal/vectorstore
-        +-- internal/auth
-        +-- internal/config
-        +-- internal/database
-        |     +-- internal/database/postgres
-        |     +-- internal/database/mssql
-        +-- internal/engine
-  vecmath <-- leaf package (imported by guardrails, vectorstore, embed)
+```mermaid
+graph TD
+    cmd["cmd/server"]
+    server["internal/server"]
+    tools["internal/tools"]
+    search["internal/search<br/>(pipeline, RRF)"]
+    vectorstore["internal/vectorstore"]
+    guardrails["internal/guardrails"]
+    hyde["internal/hyde"]
+    rerank["internal/rerank"]
+    embed["internal/embed"]
+    querystore["internal/querystore"]
+    ingest["internal/ingest"]
+    auth["internal/auth"]
+    config["internal/config"]
+    database["internal/database"]
+    postgres["internal/database/postgres"]
+    mssql["internal/database/mssql"]
+    engine["internal/engine"]
+    vecmath["vecmath<br/>(leaf package)"]
+
+    cmd --> server
+    server --> tools
+    server --> auth
+    server --> config
+    server --> database
+    server --> engine
+    tools --> search
+    tools --> querystore
+    tools --> ingest
+    search --> vectorstore
+    search --> guardrails
+    search --> hyde
+    search --> rerank
+    search --> embed
+    ingest --> embed
+    ingest --> vectorstore
+    database --> postgres
+    database --> mssql
+    guardrails -.-> vecmath
+    vectorstore -.-> vecmath
+    embed -.-> vecmath
 ```
 
 ## Key Design Decisions
@@ -82,20 +117,35 @@ cmd/server
 
 ## Search Pipeline Flow
 
-```
-1. Receive { query, limit }
-2. Auth middleware (already applied)
-3. Per-tool authorization check
-4. HyDE expansion (optional) --> embedText + prefix selection
-5. Embed via /v1/embeddings
-6. L2-normalize embedding
-7. Level 1 guardrail: topic relevance gate (pre-DB)
-8. Parallel retrieval: vector KNN || full-text search
-9. RRF merge: score(d) = sum(1/(k + rank_i(d)))
-10. Reranking (optional): cross-encoder rescoring
-11. Level 2 guardrail: minimum match score gate
-12. Truncate to limit
-13. Return results
+```mermaid
+flowchart TD
+    A["Receive { query, limit }"] --> B["Auth middleware<br/>(already applied)"]
+    B --> C["Per-tool authorization check"]
+    C --> D{"HyDE enabled?"}
+    D -- Yes --> E["HyDE expansion<br/>embedText = hypothesis<br/>prefix = passage_prefix"]
+    D -- No --> F["embedText = raw query<br/>prefix = query_prefix"]
+    E --> G["Embed via /v1/embeddings"]
+    F --> G
+    G --> H["L2-normalize embedding"]
+    H --> I{"L1 Guardrail:<br/>topic relevance"}
+    I -- "below threshold" --> Reject1["Return: off_topic error"]
+    I -- "pass" --> J
+
+    subgraph Parallel["Parallel Retrieval"]
+        J["KNN vector search"]
+        K["Full-text search"]
+    end
+
+    H --> K
+    J --> L["RRF merge<br/>score = sum(1/(k + rank))"]
+    K --> L
+    L --> M{"Reranker<br/>enabled?"}
+    M -- Yes --> N["Cross-encoder rescoring"]
+    M -- No --> O
+    N --> O{"L2 Guardrail:<br/>min match score"}
+    O -- "below threshold" --> Reject2["Return: below_threshold error"]
+    O -- "pass" --> P["Truncate to limit"]
+    P --> Q["Return results"]
 ```
 
 ## Data Model (PostgreSQL)

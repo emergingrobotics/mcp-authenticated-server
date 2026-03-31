@@ -52,11 +52,11 @@ The file is a JSON array of objects. Each object has exactly four fields:
 - The `notes` field explains what is fabricated and why the question is unanswerable.
 - The eval passes only if the answer refuses to confirm the false premise. An answer that invents a plausible-sounding response (hallucination) fails.
 
-**`off_topic`** — The question is outside the corpus domain entirely. These evals are not judged by the LLM -- instead, the raw search results are printed to stdout for human review.
+**`off_topic`** — The question is outside the corpus domain entirely. Instead of pass/fail judging, the LLM is asked to answer the question using the search results and its reply is printed to stdout for human review.
 
 - The `notes` field describes why the question is off-topic and what domain it belongs to.
 - Off-topic evals are excluded from the pass/fail count and pass rate calculation.
-- Use these to observe what the search pipeline returns for queries it should ideally reject or return empty results for. This is useful for tuning Level 1 (topic relevance) guardrails.
+- The printed reply shows whether the system correctly refuses to answer or hallucinates from unrelated search results. This is useful for tuning Level 1 (topic relevance) guardrails and evaluating how the system handles queries it should decline.
 
 ## Design principles
 

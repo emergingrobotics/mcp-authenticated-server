@@ -91,35 +91,25 @@ Both check methods follow a zero-overhead pattern: if the guard is disabled (nil
 
 Guardrails run at two points in the search pipeline (`internal/search/pipeline.go`):
 
-```
-Query
-  |
-  v
-Embed query (with optional HyDE expansion)
-  |
-  v
-L2-normalize embedding
-  |
-  v
-[Level 1] CheckTopicRelevance(queryEmbedding)  --> reject if off-topic
-  |
-  v
-Parallel KNN + Full-text search
-  |
-  v
-Reciprocal Rank Fusion (RRF) merge
-  |
-  v
-Optional cross-encoder reranking
-  |
-  v
-[Level 2] CheckMatchScore(bestScore)  --> reject if below threshold
-  |
-  v
-Truncate to requested limit
-  |
-  v
-Return results
+```mermaid
+flowchart TD
+    A["Query"] --> B["Embed query<br/>(with optional HyDE expansion)"]
+    B --> C["L2-normalize embedding"]
+    C --> L1{"Level 1<br/>CheckTopicRelevance"}
+    L1 -- "reject" --> R1["off_topic error"]
+    L1 -- "pass" --> D
+
+    D["Parallel KNN + Full-text search"] --> E["Reciprocal Rank Fusion<br/>(RRF) merge"]
+    E --> F["Optional cross-encoder<br/>reranking"]
+    F --> L2{"Level 2<br/>CheckMatchScore"}
+    L2 -- "reject" --> R2["below_threshold error"]
+    L2 -- "pass" --> G["Truncate to requested limit"]
+    G --> H["Return results"]
+
+    style L1 fill:#f9f,stroke:#333
+    style L2 fill:#f9f,stroke:#333
+    style R1 fill:#f66,stroke:#333,color:#fff
+    style R2 fill:#f66,stroke:#333,color:#fff
 ```
 
 Level 1 runs before any database queries. This is intentional: off-topic queries are rejected without consuming database resources.

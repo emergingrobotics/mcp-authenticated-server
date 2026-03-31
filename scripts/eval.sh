@@ -5,10 +5,11 @@ set -euo pipefail
 # Reads an eval JSON file, searches via the MCP server, judges results via the Anthropic API.
 #
 # Eval file format (EVAL-02):
-#   [{"prompt": "question", "label": "good|bad", "notes": "explanation"}, ...]
+#   [{"prompt": "question", "label": "good|bad|off_topic", "notes": "explanation"}, ...]
 #
-# "good" = question is answerable from the corpus.
-# "bad"  = question contains fabricated details; a passing answer must refuse the false premise.
+# "good"      = question is answerable from the corpus.
+# "bad"       = question contains fabricated details; a passing answer must refuse the false premise.
+# "off_topic" = question is outside the corpus domain; not judged, search results are printed for review.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 EVAL_FILE="${1:-}"
@@ -88,6 +89,7 @@ GOOD_PASS=0
 GOOD_TOTAL=0
 BAD_PASS=0
 BAD_TOTAL=0
+OFF_TOPIC_TOTAL=0
 FAILED_INDICES=()
 
 echo "Running ${TOTAL} evaluations from ${EVAL_FILE}..."
@@ -129,6 +131,7 @@ for i in $(seq 0 $((TOTAL - 1))); do
         FAILED_INDICES+=("$i")
         [[ "${LABEL}" == "good" ]] && GOOD_TOTAL=$((GOOD_TOTAL + 1))
         [[ "${LABEL}" == "bad" ]] && BAD_TOTAL=$((BAD_TOTAL + 1))
+        [[ "${LABEL}" == "off_topic" ]] && OFF_TOPIC_TOTAL=$((OFF_TOPIC_TOTAL + 1))
         continue
     }
 
@@ -142,6 +145,15 @@ for i in $(seq 0 $((TOTAL - 1))); do
     # Extract search result content for the judge
     CONTEXT=$(echo "${SEARCH_JSON}" | jq -r '
         .result.content[]?.text // empty' 2>/dev/null || echo "${SEARCH_JSON}")
+
+    # off_topic: print the search results for human review, no LLM judge
+    if [[ "${LABEL}" == "off_topic" ]]; then
+        OFF_TOPIC_TOTAL=$((OFF_TOPIC_TOTAL + 1))
+        echo "  REPLY:"
+        echo "${CONTEXT}" | sed 's/^/    /'
+        echo ""
+        continue
+    fi
 
     # Build judge prompt based on label
     if [[ "${LABEL}" == "good" ]]; then
@@ -207,17 +219,24 @@ Respond with a JSON object: {\"pass\": true/false, \"reason\": \"brief explanati
 done
 
 echo "---"
-echo "Results: ${PASS}/${TOTAL} passed, ${FAIL}/${TOTAL} failed"
-RATE=$(awk "BEGIN { printf \"%.1f\", (${PASS}/${TOTAL})*100 }")
-echo "Pass rate: ${RATE}%"
+JUDGED=$((TOTAL - OFF_TOPIC_TOTAL))
+if [[ ${JUDGED} -gt 0 ]]; then
+    RATE=$(awk "BEGIN { printf \"%.1f\", (${PASS}/${JUDGED})*100 }")
+    echo "Results: ${PASS}/${JUDGED} passed, ${FAIL}/${JUDGED} failed (pass rate: ${RATE}%)"
+else
+    echo "Results: no judged evals (all off_topic)"
+fi
 
 if [[ ${GOOD_TOTAL} -gt 0 ]]; then
     GOOD_RATE=$(awk "BEGIN { printf \"%.1f\", (${GOOD_PASS}/${GOOD_TOTAL})*100 }")
-    echo "  good label: ${GOOD_PASS}/${GOOD_TOTAL} (${GOOD_RATE}%)"
+    echo "  good label:      ${GOOD_PASS}/${GOOD_TOTAL} (${GOOD_RATE}%)"
 fi
 if [[ ${BAD_TOTAL} -gt 0 ]]; then
     BAD_RATE=$(awk "BEGIN { printf \"%.1f\", (${BAD_PASS}/${BAD_TOTAL})*100 }")
-    echo "  bad label:  ${BAD_PASS}/${BAD_TOTAL} (${BAD_RATE}%)"
+    echo "  bad label:       ${BAD_PASS}/${BAD_TOTAL} (${BAD_RATE}%)"
+fi
+if [[ ${OFF_TOPIC_TOTAL} -gt 0 ]]; then
+    echo "  off_topic label: ${OFF_TOPIC_TOTAL} (not judged, replies printed above)"
 fi
 
 if [[ ${#FAILED_INDICES[@]} -gt 0 ]]; then

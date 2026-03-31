@@ -1,0 +1,152 @@
+[
+  {
+    "prompt": "What is the best way to ask for a raise at work without damaging the relationship with my manager?",
+    "label": "off_topic",
+    "notes": "Personal career advice. Completely unrelated to mystery fiction. The corpus contains no self-help or workplace guidance.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How do I know if I should break up with my partner or try couples therapy first?",
+    "label": "off_topic",
+    "notes": "Relationship advice. The corpus is about mystery novels, not personal counseling.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What diet is most effective for losing weight quickly while preserving muscle mass?",
+    "label": "off_topic",
+    "notes": "Health and fitness advice. No connection to the mystery fiction corpus.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What is the average annual rainfall in the Atacama Desert and why is it so dry?",
+    "label": "off_topic",
+    "notes": "Geography and climatology question. The corpus contains fictional narratives, not earth science data.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How did the formation of the Himalayas affect monsoon patterns in South Asia?",
+    "label": "off_topic",
+    "notes": "Geology and meteorology question. No geographic or scientific content exists in the mystery fiction corpus.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What are the major rivers that flow through the Congo Basin and which countries do they cross?",
+    "label": "off_topic",
+    "notes": "Physical geography question. The corpus covers fictional detective stories, not hydrology or African geography.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How do you implement a binary search tree in Go with concurrent-safe insertions?",
+    "label": "off_topic",
+    "notes": "Programming question about Go data structures. The corpus is mystery fiction, not software documentation.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What is the difference between a mutex and a semaphore in operating system design?",
+    "label": "off_topic",
+    "notes": "Computer science concurrency concept. Entirely unrelated to mystery novels.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does TCP handle packet retransmission when a segment is lost in transit?",
+    "label": "off_topic",
+    "notes": "Networking protocol question. The corpus contains no technical or computing content.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What were the key provisions of the Treaty of Westphalia and how did it reshape European sovereignty?",
+    "label": "off_topic",
+    "notes": "European history question. While the mystery novels are set in historical periods, the corpus does not cover actual treaties or political history.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How did the invention of the printing press change literacy rates in 15th-century Europe?",
+    "label": "off_topic",
+    "notes": "Cultural history question. The corpus is fiction, not historical analysis of technology and literacy.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What narrative techniques does Ursula K. Le Guin use in The Left Hand of Darkness to explore gender?",
+    "label": "off_topic",
+    "notes": "Science fiction literary analysis. Le Guin and this novel do not appear in the mystery fiction corpus. Close domain (literature) but wrong genre.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does the three-body problem drive the plot of Liu Cixin's The Three-Body Problem?",
+    "label": "off_topic",
+    "notes": "Science fiction novel analysis. Liu Cixin's work is not in the corpus. Adjacent domain (fiction analysis) but entirely different genre and author.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What role does the ansible play as a communication device across Orson Scott Card's Ender series?",
+    "label": "off_topic",
+    "notes": "Science fiction series question. The Ender series is not in the mystery fiction corpus. Tests whether the system confuses genre-adjacent literary questions.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does Philip K. Dick use unreliable reality in Do Androids Dream of Electric Sheep to question identity?",
+    "label": "off_topic",
+    "notes": "Science fiction literary analysis. Dick's novel is not in the corpus. The themes of identity and deception overlap with mystery fiction but the source material is wrong.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "In Isaac Asimov's Foundation series, how does Hari Seldon use psychohistory to predict the fall of the Galactic Empire?",
+    "label": "off_topic",
+    "notes": "Science fiction question. Asimov's Foundation is not in the corpus. Asimov also wrote mystery fiction, making this a plausible confusion vector.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What forensic techniques does Patricia Cornwell's Kay Scarpetta use to solve cases in the early novels?",
+    "label": "off_topic",
+    "notes": "Mystery fiction question but about a series not in the corpus. Cornwell's Scarpetta novels are real mystery books but are not part of this collection. Tests whether the system hallucinates answers about mystery content it does not have.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does Agatha Christie use the unreliable narrator in The Murder of Roger Ackroyd?",
+    "label": "off_topic",
+    "notes": "Classic mystery fiction analysis but about Christie, who is not in the corpus. Very close to the corpus domain. The system should not fabricate an answer just because the genre matches.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What is the significance of the locked-room puzzle in John Dickson Carr's The Hollow Man?",
+    "label": "off_topic",
+    "notes": "Locked-room mystery question about Carr's novel, which is not in the corpus. The corpus does contain a locked-room mystery (The Whitmore Affair) but Carr's work is absent. Tests whether the system confuses similar tropes across different works.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does Arthur Conan Doyle establish Holmes's deductive method in A Study in Scarlet?",
+    "label": "off_topic",
+    "notes": "Sherlock Holmes question. Doyle is not in the corpus. The deductive method theme overlaps with the investigative methods described in the corpus (e.g., Constance Fairweather's 'arithmetic of a story') but the source is wrong.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What role does the English country house setting play in Dorothy L. Sayers's mystery novels?",
+    "label": "off_topic",
+    "notes": "Golden Age mystery question about Sayers, who is not in the corpus. The Whitmore Affair uses a similar country house setting, making this a strong confusion candidate.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does Tana French use Dublin as a character in her Dublin Murder Squad series?",
+    "label": "off_topic",
+    "notes": "Contemporary mystery fiction question. French is not in the corpus. Tests whether the system conflates real mystery authors with the fictional works in its collection.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What investigative techniques does Inspector Morse use in Colin Dexter's novels set in Oxford?",
+    "label": "off_topic",
+    "notes": "Mystery fiction question about Dexter's Morse series, not in the corpus. The investigative methods theme strongly overlaps with corpus content about detective protagonists, but the specific characters and works are absent.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "How does the Red Herring technique function in classic whodunit fiction and who pioneered its use?",
+    "label": "off_topic",
+    "notes": "General mystery genre theory question. While the corpus discusses red herrings in specific novels (e.g., Viktor Szendy in The Whitmore Affair), it does not contain genre theory or history of the technique. Tests whether the system generates a generic literary essay instead of admitting the corpus lacks this content.",
+    "file": "off-topic"
+  },
+  {
+    "prompt": "What are the defining conventions of Golden Age detective fiction and how do modern mystery writers subvert them?",
+    "label": "off_topic",
+    "notes": "Mystery genre survey question. The corpus contains specific novels that may exemplify Golden Age conventions, but does not contain critical essays or genre history. This is the closest possible off-topic question: right genre, right era, but asking for encyclopedic knowledge the corpus does not provide.",
+    "file": "off-topic"
+  }
+]

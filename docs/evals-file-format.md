@@ -2,7 +2,7 @@
 
 ## Overview
 
-Eval files are JSON arrays of evaluation cases used to measure RAG retrieval and answer quality. Each case poses a question against the ingested document corpus and declares whether the question is answerable (`good`), contains fabricated details (`bad`), or is outside the corpus domain (`off_topic`). The eval harness (`scripts/eval.sh`) runs each case through the MCP server's `search_documents` tool. For `good` and `bad` labels, an LLM judge evaluates the result. For `off_topic` labels, the raw search results are printed for human review without judging.
+Eval files are JSON arrays of evaluation cases used to measure RAG retrieval and answer quality. Each case poses a question against the ingested document corpus and declares whether the question is answerable (`good`), contains fabricated details (`bad`), or is outside the corpus domain (`off_topic`). The eval harness (`scripts/eval.sh`) runs each case through the MCP server's `search_documents` tool. For `good` and `bad` labels, an LLM judge evaluates the result. For `off_topic` labels, the LLM is asked to answer the question using the search results and its reply is printed for human review -- this shows whether the system correctly declines to answer or hallucinates from unrelated results.
 
 ## File Location
 

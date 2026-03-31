@@ -146,11 +146,34 @@ for i in $(seq 0 $((TOTAL - 1))); do
     CONTEXT=$(echo "${SEARCH_JSON}" | jq -r '
         .result.content[]?.text // empty' 2>/dev/null || echo "${SEARCH_JSON}")
 
-    # off_topic: print the search results for human review, no LLM judge
+    # off_topic: ask the LLM to answer the question using search results, print its reply
     if [[ "${LABEL}" == "off_topic" ]]; then
         OFF_TOPIC_TOTAL=$((OFF_TOPIC_TOTAL + 1))
-        echo "  REPLY:"
-        echo "${CONTEXT}" | sed 's/^/    /'
+
+        OT_RESPONSE=$(curl -sf -X POST "https://api.anthropic.com/v1/messages" \
+            -H "x-api-key: ${ANTHROPIC_API_KEY}" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+                --arg prompt "Question: ${PROMPT}
+
+Search Results:
+${CONTEXT}
+
+Answer the question using only the search results above. If the search results do not contain relevant information, say you cannot answer this question." \
+                --arg model "${EVAL_MODEL}" \
+                '{
+                    "model": $model,
+                    "max_tokens": 256,
+                    "system": "You are a RAG assistant. Answer questions using only the provided search results. If the results are not relevant to the question, say you cannot answer this question. Do not explain what the search results contain or what topics are available.",
+                    "messages": [{"role": "user", "content": $prompt}]
+                }')" 2>&1) || {
+            echo "  REPLY: (LLM request failed)"
+            continue
+        }
+
+        OT_TEXT=$(echo "${OT_RESPONSE}" | jq -r '.content[0].text' 2>/dev/null || echo "(no response)")
+        echo "  REPLY: ${OT_TEXT}"
         echo ""
         continue
     fi

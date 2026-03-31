@@ -23,7 +23,7 @@ func NewIngestTool(pipeline *ingest.Pipeline, dimension int) ToolDef {
 		InputSchema: json.RawMessage(`{
 			"type": "object",
 			"properties": {
-				"directory": {"type": "string", "description": "Path to the directory to ingest (must be in allowed_dirs)"},
+				"directory": {"type": "string", "description": "Path to the directory to ingest"},
 				"drop": {"type": "boolean", "description": "Drop and recreate tables before ingesting (default false)", "default": false}
 			},
 			"required": ["directory"]

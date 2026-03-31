@@ -26,7 +26,6 @@ type PipelineConfig struct {
 	ChunkSize         int
 	BatchSize         int
 	MaxFileSize       int64
-	AllowedDirs       []string
 	AllowedExtensions []string
 	ExcludedDirs      []string
 	PassagePrefix     string
@@ -54,11 +53,6 @@ func NewPipeline(vs vectorstore.VectorStore, emb embed.Embedder, chunker Chunker
 func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension int) (*IngestResult, error) {
 	start := time.Now()
 
-	// Validate directory
-	if err := ValidateDirectory(dir, p.config.AllowedDirs); err != nil {
-		return nil, err
-	}
-
 	// Drop and recreate if requested
 	if drop {
 		slog.Warn("dropping and recreating tables for ingest")
@@ -69,7 +63,6 @@ func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension 
 
 	// Walk directory
 	entries, err := Walk(dir, WalkOptions{
-		AllowedDirs:       p.config.AllowedDirs,
 		AllowedExtensions: p.config.AllowedExtensions,
 		ExcludedDirs:      p.config.ExcludedDirs,
 		MaxFileSize:       p.config.MaxFileSize,

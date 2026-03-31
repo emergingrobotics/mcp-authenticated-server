@@ -68,7 +68,7 @@ model = "claude-haiku-4-5-20251001"
 chunk_size = 256
 batch_size = 32
 max_file_size = "1MiB"
-allowed_dirs = ["/data"]
+
 allowed_extensions = [".txt", ".md"]
 excluded_dirs = ["node_modules", ".git"]
 
@@ -135,7 +135,7 @@ client_id = "client"
 enabled = true
 host = "http://localhost:8079"
 [ingest]
-allowed_dirs = ["/data"]
+
 max_file_size = "1MiB"
 [query]
 timeout = "30s"
@@ -167,7 +167,7 @@ token_use = "access"
 enabled = true
 host = "http://localhost:8079"
 [ingest]
-allowed_dirs = ["/data"]
+
 max_file_size = "1MiB"
 [guardrails]
 min_topic_score = 1.5
@@ -231,7 +231,7 @@ token_use = "access"
 enabled = true
 host = "http://localhost:8079"
 [ingest]
-allowed_dirs = ["/data"]
+
 max_file_size = "1MiB"
 [query]
 timeout = "30s"
@@ -260,7 +260,7 @@ token_use = "access"
 enabled = true
 host = "http://localhost:8079"
 [ingest]
-allowed_dirs = ["/data"]
+
 max_file_size = "1MiB"
 [query]
 timeout = "10m"
@@ -289,7 +289,7 @@ token_use = "bearer"
 enabled = true
 host = "http://localhost:8079"
 [ingest]
-allowed_dirs = ["/data"]
+
 max_file_size = "1MiB"
 [query]
 timeout = "30s"
@@ -318,7 +318,7 @@ token_use = "access"
 enabled = true
 host = "ftp://localhost:8079"
 [ingest]
-allowed_dirs = ["/data"]
+
 max_file_size = "1MiB"
 [query]
 timeout = "30s"
@@ -328,35 +328,6 @@ max_response_size = "10MiB"
 	_, err := Load(path)
 	if err == nil {
 		t.Fatal("expected error for ftp:// URL scheme")
-	}
-}
-
-func TestLoad_IngestAllowedDirsRequired(t *testing.T) {
-	cfg := `
-[server]
-log_level = "info"
-[database]
-engine = "postgres"
-conn_max_lifetime = "5m"
-[auth]
-region = "us-east-1"
-user_pool_id = "pool"
-client_id = "client"
-token_use = "access"
-[embed]
-enabled = true
-host = "http://localhost:8079"
-[ingest]
-allowed_dirs = []
-max_file_size = "1MiB"
-[query]
-timeout = "30s"
-max_response_size = "10MiB"
-`
-	path := writeTestConfig(t, cfg)
-	_, err := Load(path)
-	if err == nil {
-		t.Fatal("expected error for empty ingest.allowed_dirs with embed.enabled")
 	}
 }
 

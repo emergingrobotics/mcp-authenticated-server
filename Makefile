@@ -1,6 +1,6 @@
 .PHONY: help build test test-integration test-coverage lint govulncheck run \
-       container-build container-up container-down container-logs \
-       ingest schema validate eval eval-stability download-model embed-server prereqs clean
+       container-build up down container-logs \
+       ingest ingest-add schema validate eval eval-stability download-model embed-server prereqs clean
 
 # Auto-detect container engine: prefer podman, fall back to docker.
 ENGINE ?= $(shell command -v podman >/dev/null 2>&1 && echo podman || echo docker)
@@ -17,10 +17,11 @@ help:
 	@echo "  govulncheck      Run govulncheck for known vulnerabilities"
 	@echo "  run              Run the server (serve subcommand)"
 	@echo "  container-build  Build container image"
-	@echo "  container-up     Start containers via compose"
-	@echo "  container-down   Stop containers via compose"
+	@echo "  up               Start containers via compose"
+	@echo "  down             Stop containers via compose"
 	@echo "  container-logs   Tail container logs"
-	@echo "  ingest           Ingest documents (set DIR=path)"
+	@echo "  ingest           Ingest documents with drop (DIR=path, or uses config default)"
+	@echo "  ingest-add       Ingest documents with upsert, no drop (DIR=path, or uses config default)"
 	@echo "  schema           Run schema migrations"
 	@echo "  validate         Validate configuration"
 	@echo "  eval             Run evaluation script (set EVAL_FILE=path)"
@@ -64,7 +65,18 @@ container-logs:
 	$(COMPOSE) logs -f
 
 ingest:
+ifdef DIR
+	go run ./cmd/server/ ingest --drop --dir $(DIR)
+else
+	go run ./cmd/server/ ingest --drop
+endif
+
+ingest-add:
+ifdef DIR
 	go run ./cmd/server/ ingest --dir $(DIR)
+else
+	go run ./cmd/server/ ingest
+endif
 
 schema:
 	go run ./cmd/server/ schema

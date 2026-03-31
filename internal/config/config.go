@@ -100,7 +100,7 @@ type IngestConfig struct {
 	ChunkSize         int      `toml:"chunk_size"`
 	BatchSize         int      `toml:"batch_size"`
 	MaxFileSize       string   `toml:"max_file_size"`
-	AllowedDirs       []string `toml:"allowed_dirs"`
+	DefaultDir        string   `toml:"default_dir"`
 	AllowedExtensions []string `toml:"allowed_extensions"`
 	ExcludedDirs      []string `toml:"excluded_dirs"`
 
@@ -308,11 +308,6 @@ func (c *Config) Validate() error {
 	// Cross-field: corpus_topic requires embed.enabled (GUARD-08)
 	if c.Guardrails.CorpusTopic != "" && !c.Embed.Enabled {
 		return fmt.Errorf("guardrails.corpus_topic requires embed.enabled=true")
-	}
-
-	// Cross-field: ingest.allowed_dirs must be non-empty when embed is enabled
-	if c.Embed.Enabled && len(c.Ingest.AllowedDirs) == 0 {
-		return fmt.Errorf("ingest.allowed_dirs must be non-empty when embed.enabled=true")
 	}
 
 	// Query timeout max 5m

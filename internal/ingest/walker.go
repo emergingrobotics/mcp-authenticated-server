@@ -13,7 +13,6 @@ import (
 
 // WalkOptions controls directory walking behavior.
 type WalkOptions struct {
-	AllowedDirs       []string
 	AllowedExtensions []string
 	ExcludedDirs      []string
 	MaxFileSize       int64
@@ -23,26 +22,6 @@ type WalkOptions struct {
 type FileEntry struct {
 	Path    string
 	Content []byte
-}
-
-// ValidateDirectory checks that dir is under one of the allowed base directories.
-func ValidateDirectory(dir string, allowedDirs []string) error {
-	absDir, err := filepath.Abs(dir)
-	if err != nil {
-		return fmt.Errorf("resolving directory: %w", err)
-	}
-
-	for _, allowed := range allowedDirs {
-		absAllowed, err := filepath.Abs(allowed)
-		if err != nil {
-			continue
-		}
-		if absDir == absAllowed || strings.HasPrefix(absDir, absAllowed+string(filepath.Separator)) {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("directory %q is not under any allowed base directory", dir)
 }
 
 // Walk recursively walks a directory for eligible files.
@@ -125,7 +104,7 @@ func Walk(dir string, opts WalkOptions) ([]FileEntry, error) {
 		}
 
 		// Read file with O_NOFOLLOW and path verification
-		content, err := readFileNoFollow(path, dir, opts.AllowedDirs)
+		content, err := readFileNoFollow(path, dir)
 		if err != nil {
 			return nil // skip unreadable files
 		}
@@ -142,16 +121,28 @@ func Walk(dir string, opts WalkOptions) ([]FileEntry, error) {
 }
 
 // readFileNoFollow reads a file ensuring no symlink following and path verification.
-func readFileNoFollow(path string, baseDir string, allowedDirs []string) ([]byte, error) {
+func readFileNoFollow(path string, baseDir string) ([]byte, error) {
 	// Resolve real path
 	realPath, err := filepath.EvalSymlinks(path)
 	if err != nil {
 		return nil, fmt.Errorf("resolving path: %w", err)
 	}
 
-	// Verify real path is under allowed directory
-	if err := ValidateDirectory(filepath.Dir(realPath), allowedDirs); err != nil {
-		return nil, fmt.Errorf("path traversal detected: %w", err)
+	// Verify real path is under the base directory
+	realBase, err := filepath.EvalSymlinks(baseDir)
+	if err != nil {
+		return nil, fmt.Errorf("resolving base dir: %w", err)
+	}
+	absBase, err := filepath.Abs(realBase)
+	if err != nil {
+		return nil, fmt.Errorf("resolving base dir: %w", err)
+	}
+	absReal, err := filepath.Abs(filepath.Dir(realPath))
+	if err != nil {
+		return nil, fmt.Errorf("resolving real path: %w", err)
+	}
+	if absReal != absBase && !strings.HasPrefix(absReal, absBase+string(filepath.Separator)) {
+		return nil, fmt.Errorf("path traversal detected: %q is not under %q", realPath, baseDir)
 	}
 
 	// Open with O_NOFOLLOW (ING-15)

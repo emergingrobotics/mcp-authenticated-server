@@ -152,8 +152,12 @@ func runIngest(configPath string, args []string) {
 	}
 
 	if len(*dirs) == 0 {
-		fmt.Fprintln(os.Stderr, "at least one --dir is required")
-		os.Exit(1)
+		if cfg.Ingest.DefaultDir != "" {
+			*dirs = stringSlice{cfg.Ingest.DefaultDir}
+		} else {
+			fmt.Fprintln(os.Stderr, "at least one --dir is required (or set ingest.default_dir in config)")
+			os.Exit(1)
+		}
 	}
 
 	ctx := context.Background()
@@ -173,7 +177,6 @@ func runIngest(configPath string, args []string) {
 		ChunkSize:         cfg.Ingest.ChunkSize,
 		BatchSize:         cfg.Ingest.BatchSize,
 		MaxFileSize:       cfg.Ingest.MaxFileSizeBytes,
-		AllowedDirs:       cfg.Ingest.AllowedDirs,
 		AllowedExtensions: cfg.Ingest.AllowedExtensions,
 		ExcludedDirs:      cfg.Ingest.ExcludedDirs,
 		PassagePrefix:     cfg.Embed.PassagePrefix,
@@ -297,7 +300,6 @@ func runServe(configPath string) {
 			ChunkSize:         cfg.Ingest.ChunkSize,
 			BatchSize:         cfg.Ingest.BatchSize,
 			MaxFileSize:       cfg.Ingest.MaxFileSizeBytes,
-			AllowedDirs:       cfg.Ingest.AllowedDirs,
 			AllowedExtensions: cfg.Ingest.AllowedExtensions,
 			ExcludedDirs:      cfg.Ingest.ExcludedDirs,
 			PassagePrefix:     cfg.Embed.PassagePrefix,

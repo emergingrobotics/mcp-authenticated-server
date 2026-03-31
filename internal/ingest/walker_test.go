@@ -6,34 +6,6 @@ import (
 	"testing"
 )
 
-func TestValidateDirectory_Allowed(t *testing.T) {
-	err := ValidateDirectory("/data/docs", []string{"/data"})
-	if err != nil {
-		t.Errorf("expected allowed, got: %v", err)
-	}
-}
-
-func TestValidateDirectory_ExactMatch(t *testing.T) {
-	err := ValidateDirectory("/data", []string{"/data"})
-	if err != nil {
-		t.Errorf("expected allowed (exact match), got: %v", err)
-	}
-}
-
-func TestValidateDirectory_NotAllowed(t *testing.T) {
-	err := ValidateDirectory("/etc/secrets", []string{"/data"})
-	if err == nil {
-		t.Error("expected error for directory not in allowed_dirs")
-	}
-}
-
-func TestValidateDirectory_TraversalAttempt(t *testing.T) {
-	err := ValidateDirectory("/data/../etc", []string{"/data"})
-	if err == nil {
-		t.Error("expected error for path traversal attempt")
-	}
-}
-
 func TestWalk_BasicFiltering(t *testing.T) {
 	dir := t.TempDir()
 
@@ -45,7 +17,7 @@ func TestWalk_BasicFiltering(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, ".env.example"), []byte("VAR=val"), 0644)
 
 	entries, err := Walk(dir, WalkOptions{
-		AllowedDirs:       []string{dir},
+
 		AllowedExtensions: []string{".md", ".go"},
 		ExcludedDirs:      []string{},
 		MaxFileSize:       1 << 20,
@@ -82,7 +54,7 @@ func TestWalk_ExcludedDirs(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "app.js"), []byte("main"), 0644)
 
 	entries, err := Walk(dir, WalkOptions{
-		AllowedDirs:       []string{dir},
+
 		AllowedExtensions: []string{".js"},
 		ExcludedDirs:      []string{"node_modules"},
 		MaxFileSize:       1 << 20,
@@ -107,7 +79,7 @@ func TestWalk_MaxFileSize(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "big.md"), big, 0644)
 
 	entries, err := Walk(dir, WalkOptions{
-		AllowedDirs:       []string{dir},
+
 		AllowedExtensions: []string{".md"},
 		ExcludedDirs:      []string{},
 		MaxFileSize:       1000,
@@ -131,7 +103,7 @@ func TestWalk_NonExistentDir(t *testing.T) {
 func TestWalk_EmptyDir(t *testing.T) {
 	dir := t.TempDir()
 	entries, err := Walk(dir, WalkOptions{
-		AllowedDirs:       []string{dir},
+
 		AllowedExtensions: []string{".md"},
 	})
 	if err != nil {

@@ -1,15 +1,37 @@
-# MCP server container.
-# The database and embedding server are external dependencies
-# and must be running before starting this container.
-# See README.md for prerequisites.
+# Full development stack.
+# Embedding and reranker servers require bare-metal GPU access
+# and must be run separately -- see: make run-inference-servers
 
 services:
+  postgres:
+    image: docker.io/pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mcpuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mcppass}
+      POSTGRES_DB: ${POSTGRES_DB:-mcp_server}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mcpuser}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
   server:
     build:
       context: .
       dockerfile: Containerfile
     ports:
-      - "9090:9090"
+      - "${SERVER_PORT:-9090}:9090"
     env_file:
       - .envrc
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  pgdata:

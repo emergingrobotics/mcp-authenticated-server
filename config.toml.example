@@ -63,6 +63,9 @@ dimension = 768
 query_prefix = ""
 # Prefix prepended to passages before embedding
 passage_prefix = ""
+# Hugging Face repo and filename for 'make download-models'
+hf_repo = "nomic-ai/nomic-embed-text-v1.5-GGUF"
+hf_file = "nomic-embed-text-v1.5.Q8_0.gguf"
 
 [search]
 # IVFFlat probes per KNN query
@@ -77,6 +80,9 @@ rrf_constant = 60
 enabled = false
 # Cross-encoder /rerank endpoint
 host = "http://localhost:8081"
+# Hugging Face repo and filename for 'make download-models'
+hf_repo = "gpustack/bge-reranker-v2-m3-GGUF"
+hf_file = "bge-reranker-v2-m3-Q8_0.gguf"
 
 [guardrails]
 # Corpus topic description (empty = Level 1 disabled; requires embed.enabled)

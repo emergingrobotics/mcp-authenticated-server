@@ -70,6 +70,8 @@ type EmbedConfig struct {
 	Dimension     int    `toml:"dimension"`
 	QueryPrefix   string `toml:"query_prefix"`
 	PassagePrefix string `toml:"passage_prefix"`
+	HFRepo        string `toml:"hf_repo"`
+	HFFile        string `toml:"hf_file"`
 }
 
 type SearchConfig struct {
@@ -81,6 +83,8 @@ type SearchConfig struct {
 type RerankerConfig struct {
 	Enabled bool   `toml:"enabled"`
 	Host    string `toml:"host"`
+	HFRepo  string `toml:"hf_repo"`
+	HFFile  string `toml:"hf_file"`
 }
 
 type GuardrailsConfig struct {

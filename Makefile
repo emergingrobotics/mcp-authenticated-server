@@ -1,10 +1,12 @@
 .PHONY: help build test test-integration test-coverage lint govulncheck run \
        container-build container-up container-down container-logs \
-       ingest ingest-add schema validate eval eval-stability download-model embed-server prereqs clean
+       ingest ingest-add schema validate eval eval-stability \
+       prereqs download-models embed-server reranker-server run-inference-servers clean
 
 # Auto-detect container engine: prefer podman, fall back to docker.
 ENGINE ?= $(shell command -v podman >/dev/null 2>&1 && echo podman || echo docker)
 COMPOSE = $(ENGINE) compose
+CONFIG  ?= config.toml
 
 # Default: print available targets.
 help:
@@ -26,10 +28,14 @@ help:
 	@echo "  validate         Validate configuration"
 	@echo "  eval             Run evaluation script (set EVAL_FILE=path)"
 	@echo "  eval-stability   Run stability evaluation script (set EVAL_FILE=path)"
-	@echo "  download-model   Download embedding model"
-	@echo "  embed-server     Start llama-server for embeddings"
-	@echo "  prereqs          Print prerequisite install instructions"
 	@echo "  clean            Remove build artifacts and coverage files"
+	@echo ""
+	@echo "Setup targets (from installers/):"
+	@echo "  prereqs          Print prerequisite install instructions"
+	@echo "  download-models  Download all GGUF models listed in config.toml"
+	@echo "  embed-server     Start llama-server for embeddings (foreground)"
+	@echo "  reranker-server  Start llama-server for reranking (foreground)"
+	@echo "  run-inference-servers  Start embedding and reranker servers in the background"
 
 build:
 	go build -o bin/mcp-server ./cmd/server/
@@ -49,8 +55,8 @@ lint:
 govulncheck:
 	govulncheck ./...
 
-run:
-	go run ./cmd/server/ serve
+run: build
+	bin/mcp-server serve
 
 container-build:
 	$(ENGINE) build -t mcp-server .
@@ -64,25 +70,25 @@ container-down:
 container-logs:
 	$(COMPOSE) logs -f
 
-ingest:
+ingest: build
 ifdef DIR
-	go run ./cmd/server/ ingest --drop --dir $(DIR)
+	bin/mcp-server ingest --drop --dir $(DIR)
 else
-	go run ./cmd/server/ ingest --drop
+	bin/mcp-server ingest --drop
 endif
 
-ingest-add:
+ingest-add: build
 ifdef DIR
-	go run ./cmd/server/ ingest --dir $(DIR)
+	bin/mcp-server ingest --dir $(DIR)
 else
-	go run ./cmd/server/ ingest
+	bin/mcp-server ingest
 endif
 
-schema:
-	go run ./cmd/server/ schema
+schema: build
+	bin/mcp-server schema
 
-validate:
-	go run ./cmd/server/ validate
+validate: build
+	bin/mcp-server validate
 
 eval:
 ifndef EVAL_FILE
@@ -96,38 +102,9 @@ ifndef EVAL_FILE
 endif
 	./scripts/eval-stability.sh $(EVAL_FILE)
 
-# Embedding model defaults
-EMBED_MODEL ?= models/nomic-embed-text-v1.5.Q8_0.gguf
-EMBED_PORT  ?= 8079
-EMBED_HOST  ?= 127.0.0.1
-EMBED_GPU   ?= -1
-EMBED_BATCH ?= 2048
-
-download-model:
-	./scripts/download-model.sh $(MODEL_REPO) $(MODEL_FILE)
-
-embed-server:
-	@command -v llama-server >/dev/null 2>&1 || { echo "llama-server not found in PATH. See docs/installing-llama-server.md"; exit 1; }
-	@test -f $(EMBED_MODEL) || { echo "Model not found: $(EMBED_MODEL). Run 'make download-model' first."; exit 1; }
-	llama-server \
-		--model $(EMBED_MODEL) \
-		--embedding \
-		--port $(EMBED_PORT) \
-		--host $(EMBED_HOST) \
-		--n-gpu-layers $(EMBED_GPU) \
-		--batch-size $(EMBED_BATCH) \
-		--ubatch-size $(EMBED_BATCH)
-
-prereqs:
-	@echo "Install a container engine (podman preferred):"
-	@echo "  Fedora/RHEL: sudo dnf install podman podman-compose"
-	@echo "  Ubuntu/Debian: sudo apt install podman podman-compose"
-	@echo "  macOS: brew install podman podman-compose"
-	@echo "  Alternative: install Docker Desktop from https://www.docker.com"
-	@echo ""
-	@echo "Install Go tools:"
-	@echo "  go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
-	@echo "  go install golang.org/x/vuln/cmd/govulncheck@latest"
+# Setup targets -- delegated to installers/Makefile
+prereqs download-models embed-server reranker-server run-inference-servers:
+	$(MAKE) -C installers $@
 
 clean:
 	rm -rf bin/

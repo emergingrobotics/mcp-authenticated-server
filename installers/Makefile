@@ -1,4 +1,4 @@
-.PHONY: help prereqs download-models embed-server reranker-server run-inference-servers
+.PHONY: help prereqs download-models embed-server reranker-server run-inference-servers stop-inference-servers
 
 ROOT_DIR := $(dir $(MAKEFILE_LIST))..
 CONFIG   ?= $(ROOT_DIR)/config.toml
@@ -22,7 +22,8 @@ help:
 	@echo "  download-models  Download all GGUF models listed in config.toml"
 	@echo "  embed-server     Start llama-server for embeddings (foreground)"
 	@echo "  reranker-server  Start llama-server for reranking (foreground)"
-	@echo "  run-inference-servers  Start embedding and reranker servers in the background"
+	@echo "  run-inference-servers   Start embedding and reranker servers in the background"
+	@echo "  stop-inference-servers  Stop background inference servers"
 
 prereqs:
 	@echo "Install a container engine (podman preferred):"
@@ -86,3 +87,19 @@ run-inference-servers:
 		--ctx-size 8192 \
 		> /tmp/llama-reranker.log 2>&1 & \
 	echo "  PID: $$!  log: /tmp/llama-reranker.log"
+
+stop-inference-servers:
+	@EMBED_PID=$$(lsof -ti tcp:$(EMBED_PORT) 2>/dev/null); \
+	if [ -n "$$EMBED_PID" ]; then \
+		echo "stopping embed server (PID: $$EMBED_PID) on port $(EMBED_PORT)..."; \
+		kill $$EMBED_PID; \
+	else \
+		echo "no embed server running on port $(EMBED_PORT)"; \
+	fi
+	@RERANKER_PID=$$(lsof -ti tcp:$(RERANKER_PORT) 2>/dev/null); \
+	if [ -n "$$RERANKER_PID" ]; then \
+		echo "stopping reranker server (PID: $$RERANKER_PID) on port $(RERANKER_PORT)..."; \
+		kill $$RERANKER_PID; \
+	else \
+		echo "no reranker server running on port $(RERANKER_PORT)"; \
+	fi

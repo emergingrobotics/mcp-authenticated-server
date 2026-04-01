@@ -1,6 +1,7 @@
 # Secrets and config
 .env
 .envrc
+.env.mk
 config.toml
 
 # Build artifacts

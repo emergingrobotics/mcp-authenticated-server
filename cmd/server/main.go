@@ -3,18 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/emergingrobotics/mcp-authenticated-server/internal/auth"
+	"github.com/emergingrobotics/mcp-authenticated-server/internal/cli"
 	"github.com/emergingrobotics/mcp-authenticated-server/internal/config"
-	"github.com/emergingrobotics/mcp-authenticated-server/internal/database"
-	dbmssql "github.com/emergingrobotics/mcp-authenticated-server/internal/database/mssql"
-	dbpostgres "github.com/emergingrobotics/mcp-authenticated-server/internal/database/postgres"
 	"github.com/emergingrobotics/mcp-authenticated-server/internal/embed"
 	"github.com/emergingrobotics/mcp-authenticated-server/internal/guardrails"
 	hydemod "github.com/emergingrobotics/mcp-authenticated-server/internal/hyde"
@@ -34,182 +30,14 @@ func main() {
 	configPath := flag.String("config", "config.toml", "path to config file")
 	flag.Parse()
 
-	args := flag.Args()
-	command := "serve"
-	if len(args) > 0 {
-		command = args[0]
-	}
-
-	switch command {
-	case "serve":
-		runServe(*configPath)
-	case "ingest":
-		runIngest(*configPath, args[1:])
-	case "validate":
-		runValidate(*configPath)
-	case "schema":
-		runSchema(*configPath)
-	default:
-		fmt.Fprintf(os.Stderr, "unknown command: %s\nCommands: serve, ingest, validate, schema\n", command)
-		os.Exit(1)
-	}
-}
-
-func setupLogging(level string) {
-	var logLevel slog.Level
-	switch strings.ToLower(level) {
-	case "debug":
-		logLevel = slog.LevelDebug
-	case "warn":
-		logLevel = slog.LevelWarn
-	case "error":
-		logLevel = slog.LevelError
-	default:
-		logLevel = slog.LevelInfo
-	}
-	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: logLevel})
-	slog.SetDefault(slog.New(handler))
-}
-
-func loadConfig(path string) *config.Config {
-	cfg, err := config.Load(path)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "config error: %v\n", err)
-		os.Exit(1)
-	}
-	return cfg
-}
-
-func createStore(cfg *config.Config) database.Store {
-	switch cfg.Database.Engine {
-	case "postgres":
-		return dbpostgres.New()
-	case "mssql":
-		return dbmssql.New()
-	default:
-		fmt.Fprintf(os.Stderr, "unsupported database engine: %s\n", cfg.Database.Engine)
-		os.Exit(1)
-		return nil
-	}
-}
-
-func connectDB(ctx context.Context, cfg *config.Config, store database.Store) {
-	dsn := cfg.Database.URL
-	if dsn == "" {
-		dsn = os.Getenv("DATABASE_URL")
-	}
-	if dsn == "" {
-		fmt.Fprintln(os.Stderr, "DATABASE_URL not set")
-		os.Exit(1)
-	}
-
-	if err := store.Connect(ctx, dsn, cfg.Database.MaxOpenConns, cfg.Database.MaxIdleConns, cfg.Database.ConnMaxLifetime); err != nil {
-		fmt.Fprintf(os.Stderr, "database connection failed: %v\n", err)
-		os.Exit(1) // ERR-02
-	}
-}
-
-func runValidate(configPath string) {
-	_, err := config.Load(configPath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "invalid config: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Println("config is valid")
-	os.Exit(0)
-}
-
-func runSchema(configPath string) {
-	cfg := loadConfig(configPath)
-	setupLogging(cfg.Server.LogLevel)
-
-	ctx := context.Background()
-	store := createStore(cfg)
-	connectDB(ctx, cfg, store)
-	defer store.Close()
-
-	if err := store.ApplySchema(ctx, cfg.Embed.Dimension); err != nil {
-		fmt.Fprintf(os.Stderr, "schema apply failed: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Println("schema applied successfully")
-}
-
-func runIngest(configPath string, args []string) {
-	cfg := loadConfig(configPath)
-	setupLogging(cfg.Server.LogLevel)
-
-	ingestFlags := flag.NewFlagSet("ingest", flag.ExitOnError)
-	dirs := &stringSlice{}
-	ingestFlags.Var(dirs, "dir", "directory to ingest (repeatable)")
-	drop := ingestFlags.Bool("drop", false, "drop and recreate tables")
-	dryRun := ingestFlags.Bool("dry-run", false, "show what would be ingested")
-	verbose := ingestFlags.Bool("verbose", false, "verbose output")
-	ingestFlags.Parse(args)
-
-	if *verbose {
-		setupLogging("debug")
-	}
-
-	if len(*dirs) == 0 {
-		if cfg.Ingest.DefaultDir != "" {
-			*dirs = stringSlice{cfg.Ingest.DefaultDir}
-		} else {
-			fmt.Fprintln(os.Stderr, "at least one --dir is required (or set ingest.default_dir in config)")
-			os.Exit(1)
-		}
-	}
-
-	ctx := context.Background()
-	store := createStore(cfg)
-	connectDB(ctx, cfg, store)
-	defer store.Close()
-
-	if err := store.ApplySchema(ctx, cfg.Embed.Dimension); err != nil {
-		fmt.Fprintf(os.Stderr, "schema apply failed: %v\n", err)
-		os.Exit(1)
-	}
-
-	embedClient := embed.NewClient(cfg.Embed.Host, cfg.Embed.Model, cfg.Embed.QueryPrefix, cfg.Embed.PassagePrefix)
-	vs := vectorstore.NewPostgresStore(store.Pool(), cfg.Embed.Dimension)
-
-	pipeline := ingest.NewPipeline(vs, embedClient, &ingest.MarkdownChunker{}, ingest.PipelineConfig{
-		ChunkSize:         cfg.Ingest.ChunkSize,
-		BatchSize:         cfg.Ingest.BatchSize,
-		MaxFileSize:       cfg.Ingest.MaxFileSizeBytes,
-		AllowedExtensions: cfg.Ingest.AllowedExtensions,
-		ExcludedDirs:      cfg.Ingest.ExcludedDirs,
-		PassagePrefix:     cfg.Embed.PassagePrefix,
-	})
-
-	if *dryRun {
-		fmt.Println("dry-run mode: would ingest from:")
-		for _, d := range *dirs {
-			fmt.Printf("  %s\n", d)
-		}
-		return
-	}
-
-	for _, d := range *dirs {
-		result, err := pipeline.Ingest(ctx, d, *drop, cfg.Embed.Dimension)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "ingest error for %s: %v\n", d, err)
-			continue
-		}
-		fmt.Printf("Ingested %s: %d docs, %d chunks, %d errors, %.2fs\n",
-			d, result.DocumentsProcessed, result.ChunksCreated, result.Errors, result.DurationSeconds)
-	}
-}
-
-func runServe(configPath string) {
-	cfg := loadConfig(configPath)
-	setupLogging(cfg.Server.LogLevel)
+	cfg := cli.LoadConfig(*configPath)
+	cli.SetupLogging(cfg.Server.LogLevel)
 
 	ctx := context.Background()
 
 	// Connect to database
-	store := createStore(cfg)
-	connectDB(ctx, cfg, store)
+	store := cli.CreateStore(cfg)
+	cli.ConnectDB(ctx, cfg, store)
 	defer store.Close()
 
 	// Apply schema
@@ -354,7 +182,7 @@ func runServe(configPath string) {
 	go func() {
 		for range sighupChan {
 			slog.Info("received SIGHUP, reloading config")
-			newCfg, err := config.Load(configPath)
+			newCfg, err := config.Load(*configPath)
 			if err != nil {
 				slog.Error("config reload failed, keeping previous config", "error", err)
 				continue
@@ -363,7 +191,7 @@ func runServe(configPath string) {
 			changed := config.ApplyReload(cfg, reloaded)
 			if len(changed) > 0 {
 				slog.Info("config reloaded", "changed_sections", changed)
-				setupLogging(cfg.Server.LogLevel)
+				cli.SetupLogging(cfg.Server.LogLevel)
 			} else {
 				slog.Info("config reloaded, no changes")
 			}
@@ -393,13 +221,4 @@ func runServe(configPath string) {
 			os.Exit(1)
 		}
 	}
-}
-
-// stringSlice implements flag.Value for repeatable string flags.
-type stringSlice []string
-
-func (s *stringSlice) String() string { return strings.Join(*s, ", ") }
-func (s *stringSlice) Set(v string) error {
-	*s = append(*s, v)
-	return nil
 }

@@ -1,6 +1,6 @@
 .PHONY: help build test test-integration test-coverage lint govulncheck run \
        container-build container-up container-down container-logs \
-       ingest ingest-add validate eval eval-stability \
+       ingest ingest-add validate eval eval-stability status \
        prereqs download-models embed-server reranker-server run-inference-servers stop-inference-servers clean
 
 # Load environment from .envrc if present (strip 'export ' prefix for Make compatibility).
@@ -36,6 +36,7 @@ help:
 	@echo "  validate         Validate configuration"
 	@echo "  eval             Run evaluation script (set EVAL_FILE=path)"
 	@echo "  eval-stability   Run stability evaluation script (set EVAL_FILE=path)"
+	@echo "  status           Show status of all services"
 	@echo "  clean            Remove build artifacts and coverage files"
 	@echo ""
 	@echo "Setup targets (from installers/):"
@@ -110,6 +111,27 @@ ifndef EVAL_FILE
 	$(error EVAL_FILE is required. Usage: make eval-stability EVAL_FILE=data/evals/evals.json)
 endif
 	./scripts/eval-stability.sh $(EVAL_FILE)
+
+SERVER_PORT ?= $(shell awk '/^\[server\]/{f=1} f && /^port/{gsub(/"/, "", $$3); print $$3; exit}' $(CONFIG) 2>/dev/null || echo 9090)
+EMBED_HOST_URL ?= $(shell awk '/^\[embed\]/{f=1} f && /^host/{gsub(/"/, "", $$3); print $$3; exit}' $(CONFIG) 2>/dev/null || echo http://localhost:8079)
+RERANKER_HOST_URL ?= $(shell awk '/^\[reranker\]/{f=1} f && /^host/{gsub(/"/, "", $$3); print $$3; exit}' $(CONFIG) 2>/dev/null || echo http://localhost:8081)
+PG_PORT ?= $(shell echo "$(DATABASE_URL)" | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
+
+status:
+	@echo "=== Service Status ==="
+	@echo ""
+	@printf "  %-22s" "MCP server (:$(SERVER_PORT))"
+	@curl -sf -o /dev/null http://localhost:$(SERVER_PORT)/health 2>/dev/null \
+		&& echo "UP" || echo "DOWN"
+	@printf "  %-22s" "PostgreSQL (:$(PG_PORT))"
+	@pg_isready -h localhost -p $(PG_PORT) >/dev/null 2>&1 \
+		&& echo "UP" || echo "DOWN"
+	@printf "  %-22s" "Embed server"
+	@curl -sf -o /dev/null $(EMBED_HOST_URL)/health 2>/dev/null \
+		&& echo "UP" || echo "DOWN"
+	@printf "  %-22s" "Reranker server"
+	@curl -sf -o /dev/null $(RERANKER_HOST_URL)/health 2>/dev/null \
+		&& echo "UP" || echo "DOWN"
 
 # Setup targets -- delegated to installers/Makefile
 prereqs download-models embed-server reranker-server run-inference-servers stop-inference-servers:

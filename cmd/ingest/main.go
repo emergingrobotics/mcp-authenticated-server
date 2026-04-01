@@ -74,8 +74,9 @@ func main() {
 			fmt.Fprintf(os.Stderr, "ingest error for %s: %v\n", d, err)
 			continue
 		}
-		fmt.Printf("Ingested %s: %d docs, %d chunks, %d errors, %.2fs\n",
-			d, result.DocumentsProcessed, result.ChunksCreated, result.Errors, result.DurationSeconds)
+		fmt.Printf("dirs=1 files=%d chunks=%d elapsed=%.3fs\n",
+			result.DocumentsProcessed, result.ChunksCreated, result.DurationSeconds)
+		fmt.Println("ingest: completed successfully")
 	}
 }
 

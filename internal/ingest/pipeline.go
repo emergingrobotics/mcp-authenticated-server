@@ -53,12 +53,20 @@ func NewPipeline(vs vectorstore.VectorStore, emb embed.Embedder, chunker Chunker
 func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension int) (*IngestResult, error) {
 	start := time.Now()
 
+	// Check embed server liveness before starting
+	if err := p.embedder.Ping(ctx); err != nil {
+		slog.Error("embed server unreachable", "error", err)
+		return nil, fmt.Errorf("embed server liveness check: %w", err)
+	}
+	slog.Info("checking embed server liveness", "url", p.embedder.Host())
+
 	// Drop and recreate if requested
 	if drop {
-		slog.Warn("dropping and recreating tables for ingest")
+		slog.Info("dropping all data")
 		if err := p.vectorStore.DropAndRecreateTables(ctx, dimension); err != nil {
 			return nil, fmt.Errorf("drop tables: %w", err)
 		}
+		slog.Info("drop complete")
 	}
 
 	// Walk directory
@@ -76,9 +84,15 @@ func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension 
 		return &IngestResult{DurationSeconds: time.Since(start).Seconds()}, nil
 	}
 
+	slog.Info("ingesting directory", "dir", dir)
+
 	result := &IngestResult{}
 
 	for _, entry := range entries {
+		relPath := filepath.Base(entry.Path)
+		slog.Info("processing file", "path", relPath)
+
+		chunksBefore := result.ChunksCreated
 		if err := p.processFile(ctx, entry, result); err != nil {
 			// ERR-16: embed server unreachable (connection refused, DNS, timeout) -> halt immediately
 			if errors.Is(err, embed.ErrUnavailable) {
@@ -87,15 +101,23 @@ func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension 
 				return result, err
 			}
 			// ERR-15: per-file error (including embed 500s) -> warn, skip, continue
-			slog.Warn("per-file error, skipping", "path", entry.Path, "error", err)
+			slog.Warn("per-file error, skipping", "path", relPath, "error", err)
 			result.Errors++
+			continue
 		}
+
+		fileChunks := result.ChunksCreated - chunksBefore
+		isNew := true // TODO: track upsert vs new in processFile if needed
+		slog.Info("file complete", "path", relPath, "chunks", fileChunks, "new", isNew)
 	}
+
+	slog.Info("directory complete", "dir", dir, "files", result.DocumentsProcessed, "chunks", result.ChunksCreated)
 
 	// Create IVFFlat index if needed
 	if drop {
 		count, err := p.vectorStore.GetChunkCount(ctx)
 		if err == nil && count >= 100 {
+			slog.Info("rebuilding ivfflat index", "chunk_count", count)
 			if err := p.vectorStore.CreateIVFFlatIndex(ctx); err != nil {
 				slog.Warn("failed to create IVFFlat index", "error", err)
 			}
@@ -112,6 +134,12 @@ func (p *Pipeline) Ingest(ctx context.Context, dir string, drop bool, dimension 
 	p.vectorStore.WriteBuildMetadata(ctx, metadata)
 
 	result.DurationSeconds = time.Since(start).Seconds()
+	slog.Info("ingest complete",
+		"dirs", 1,
+		"files", result.DocumentsProcessed,
+		"chunks", result.ChunksCreated,
+		"elapsed", fmt.Sprintf("%.3fs", result.DurationSeconds),
+	)
 	return result, nil
 }
 

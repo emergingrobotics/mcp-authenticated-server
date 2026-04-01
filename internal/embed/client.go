@@ -119,6 +119,25 @@ func (c *Client) EmbedWithPrefix(ctx context.Context, texts []string, prefix str
 	return embeddings, nil
 }
 
+// Ping checks whether the embedding server is reachable via its health endpoint.
+func (c *Client) Ping(ctx context.Context) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.host+"/health", nil)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrUnavailable, err)
+	}
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrUnavailable, err)
+	}
+	resp.Body.Close()
+	return nil
+}
+
+// Host returns the embedding server URL.
+func (c *Client) Host() string {
+	return c.host
+}
+
 // QueryPrefix returns the configured query prefix.
 func (c *Client) QueryPrefix() string {
 	return c.queryPrefix

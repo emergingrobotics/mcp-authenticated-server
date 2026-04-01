@@ -10,4 +10,10 @@ type Embedder interface {
 
 	// EmbedWithPrefix generates embeddings with a specific prefix prepended to each text.
 	EmbedWithPrefix(ctx context.Context, texts []string, prefix string) ([][]float32, error)
+
+	// Ping checks whether the embedding server is reachable.
+	Ping(ctx context.Context) error
+
+	// Host returns the embedding server URL.
+	Host() string
 }
